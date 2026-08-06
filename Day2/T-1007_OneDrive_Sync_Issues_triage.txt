@@ -1,0 +1,86 @@
+TICKET ANALYSIS: T-1007 OneDrive Stuck 'Processing Changes' Since Migration; Files Missing Locally
+========================================================================================================
+
+SUMMARY
+-------
+User's OneDrive sync process stuck in "processing changes" state since mailbox/data migration; files not syncing to local device and show missing locally.
+
+IMPACT
+------
+Who:          Single user
+How many:     1 user affected
+Urgency:      HIGH - Files inaccessible locally; work stopped if user requires offline access; potential data visibility issue
+Business:     User unable to access migrated files; productivity blocked; data loss risk if sync corrupted or incomplete
+
+KNOWN FACTS
+-----------
+• OneDrive sync initiated/pending since data migration
+• Sync status: "Processing changes" (stuck/not progressing)
+• Files not appearing on user's device
+• Migration completed ~[timing to-verify]
+• [to-verify] Files visible in web (OneDrive.com) or missing there too
+
+MISSING INFORMATION TO GATHER
+-------------------------------
+1. [to-verify] When did "processing changes" start? (During migration, after, exact date?)
+2. [to-verify] Files visible in OneDrive web portal, or missing from cloud too?
+3. [to-verify] User's OneDrive folder location (C:\Users\[user]\OneDrive or other)?
+4. [to-verify] Approximate number of files and total volume (MB/GB) being synced?
+5. [to-verify] OneDrive account type: personal, work (Microsoft 365), or SharePoint?
+6. [to-verify] Device's free disk space available for OneDrive sync?
+7. [to-verify] Is "processing changes" display permanent or changing intermittently?
+8. [to-verify] Any OneDrive sync errors in activity center (blue cloud icon)?
+9. [to-verify] Device network connectivity stable or intermittent?
+10. [to-verify] Migration source and target (on-prem to cloud, cross-tenant, etc.)?
+
+LIKELY CATEGORY
+---------------
+OneDrive sync stalled → Data migration incomplete/corrupted → Network connectivity → Disk space/permissions
+
+ROOT CAUSE POSSIBILITIES (to-verify)
+- OneDrive migration sync queue incomplete; files not copied to cloud during migration
+- OneDrive client version incompatible with post-migration tenant; sync session corrupted
+- Insufficient free disk space on device; sync cannot download/stage files
+- Files locked or permissions changed during migration; sync unable to write locally
+- OneDrive placeholders enabled (cloud files) but file metadata not synced; "processing" loop
+- Network connectivity intermittent; sync process stalled waiting for connection
+- OneDrive account still provisioning/syncing tenant permissions post-migration
+- Sync database corrupted; "processing changes" stuck querying incomplete transaction log
+- Files moved/deleted in cloud during sync causing sync loop
+
+FIRST DIAGNOSTIC STEP
+---------------------
+1. Verify cloud-side data:
+   • User: Open web browser → OneDrive.com (or SharePoint site)
+   • Document: Are files visible in cloud? Count/size of files present?
+   • If files missing in cloud → data not migrated; escalate to migration team
+
+2. Check OneDrive sync status and activity:
+   • User: Right-click OneDrive icon (system tray) → View sync problems
+   • Document: Any errors listed, or just "processing changes"?
+   • User: Click OneDrive icon → Activity → look for detailed sync errors
+
+3. Assess device resources:
+   • User: File Explorer → right-click [OneDrive folder] → Properties
+   • Document: Folder size shown, and compare to available disk space
+   • Check: Device has at least 2 GB free space available
+
+4. Check OneDrive client version and restart sync:
+   • User: OneDrive icon (tray) → Help & Settings → About
+   • Document: OneDrive version; is it latest version for OS?
+   • User: Try restart: Pause (30 sec) → Resume sync in tray menu
+   • Wait: Monitor "processing changes" status for 5 min
+
+5. Monitor progress:
+   • User: Check tray icon after 5 min — any change in status?
+   • If status persists: Right-click OneDrive → Help & Settings → Settings → Sync and backup
+   • Review: Is "OneDrive placeholder features" enabled (Files on Demand)?
+   • Document: Setting and any errors shown
+
+ESCALATION THRESHOLD
+--------------------
+If files missing from OneDrive.com (cloud) → migration incomplete; escalate to migration/data team
+If "processing changes" persists >1 hour after restart → escalate to OneDrive team with client logs
+If disk space insufficient (<500 MB free) → user must free space before sync can proceed
+If sync errors shown → collect error details and escalate to 2nd line with OneDrive activity logs
+If suspicious file count/size mismatch → data integrity concern; escalate to 2nd line and migration team

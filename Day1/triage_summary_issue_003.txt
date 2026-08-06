@@ -1,0 +1,27 @@
+Summary (one line)
+3rd floor primary/shared printer reported missing/unavailable, affecting whole team ahead of a 14:00 client meeting.
+
+Impact (who/how many/business urgency)
+- Who: Team on 3rd floor (to confirm exact team name).
+- How many: Whole team affected (to confirm exact user count).
+- Business urgency: High, due to client meeting at 14:00.
+
+Known facts
+- User reports: "printer gone."
+- The affected device is described as "the big one on 3rd floor."
+- "whole team affected."
+- "we have a client meeting at 2."
+
+Missing information to gather
+- To confirm exact printer name/asset ID/queue name.
+- To confirm whether "gone" means physically missing, powered off, or not visible on devices.
+- To confirm whether issue affects printing from all users and all applications.
+- To confirm whether any error messages/codes are shown.
+- To confirm when the issue started and whether any recent changes occurred (moves, maintenance, network/power).
+- To confirm if alternate printers are available nearby.
+
+Likely category
+- End-user devices and peripherals > Printer incident (to confirm exact service taxonomy path).
+
+Suggest first diagnostic step
+- Immediately contact 3rd floor onsite/facilities point of contact to verify whether the printer is physically present and powered/network-connected, while in parallel capturing the printer queue name from one affected user (to confirm).

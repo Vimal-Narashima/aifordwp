@@ -1,0 +1,27 @@
+Summary (one line): User cannot connect to VDI from home today; connection error states "cannot connect".
+
+Impact (who/how many/ business urgency):
+- Affected user count: 1 user reported (to confirm)
+- Scope: Single-user remote access issue while working from home (to confirm)
+- Business urgency: User currently unable to access VDI for work today (to confirm)
+
+Known facts:
+- User reports they "cant get on the vdi thing today".
+- Error shown is "cannot connect".
+- Service was working on Friday.
+- User is at home using Wi-Fi.
+
+Missing information to gather:
+- Exact error message text and any error code/screenshot.
+- Whether other applications/internet browsing are working on the same device/network.
+- Whether the user can connect via alternative network (e.g., mobile hotspot).
+- Device type and managed status (DWP laptop/thin client/personal device) (to confirm).
+- VPN status, if required for VDI access (to confirm).
+- Whether other users are currently affected (to confirm).
+- Time issue started and whether this is continuous or intermittent.
+
+Likely catagory:
+- Remote access / VDI connectivity incident (single user) (to confirm)
+
+Suggest first diagnostic step:
+- Ask the user to provide the exact on-screen error (and code if present), then run a quick connectivity check by confirming general internet access and retrying VDI after reconnecting home Wi-Fi.

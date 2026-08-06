@@ -1,0 +1,32 @@
+1. "write something for the user about their email"
+
+You are a DWP service-desk analyst. A user's Outlook mailbox has exceeded its storage quota and new mail is not being delivered. Write a short email to the user explaining the issue, the impact, and the two steps they need to take to resolve it. Plain, professional tone. No preamble - return only the email text.
+
+2. "you are a helpful assistant who always gives detailed, accurate, professional, well-structured, clear and concise answers. Tell me about Intune."
+
+You are a DWP IT service-desk trainer. In the context of the FinBridge Win11 migration, explain what Microsoft Intune is used for and list the three Intune-managed settings most likely to cause a helpdesk ticket on a newly enrolled device. For each, give the setting name and the user-visible symptom. No preamble - return only the list.
+
+3. "A user says their laptop is slow. What is the problem and fix it."
+
+You are a DWP service-desk analyst on a call with a user reporting a slow Win11 laptop. List the three diagnostic questions you would ask first to narrow down the cause, in the order you'd ask them. For each question, state what answer would point to which likely cause. No preamble - return only the numbered list.
+
+4. "List every possible reason a Windows 11 device might have any kind of issue connecting to any kind of network resource."
+
+You are a DWP service-desk analyst. List the five most likely causes of a managed Win11 laptop failing to connect to a specific internal network share, most probable first. For each cause give: the likely reason, and the single fastest check. No preamble - return only the numbered list.
+
+5. "Rewrite this so it sounds better: 'Device non-compliant due to BitLocker not enabled. Remediation applied. Compliance restored.'"
+
+You are a DWP service-desk analyst closing a ticket. Rewrite the following compliance note as a two-sentence entry suitable for the user-facing ticket log, in plain non-technical language. Keep it factual - do not add detail that isn't in the original. Return only the rewritten note.
+
+"Device non-compliant due to BitLocker not enabled. Remediation applied. Compliance restored."
+
+6. "You are a senior DWP engineer with 20 years experience. A user cannot log in. Solve this completely and give me the guaranteed fix."
+
+You are a DWP service-desk analyst. A user on a newly deployed Win11 laptop cannot log in with their usual credentials. List the four most likely causes, most probable first. For each cause give: the likely reason, and the single fastest check. No preamble - return only the numbered list.
+
+Why these changes matter:
+
+Dropped the inflated/unnecessary role claims ("20 years experience," "always gives detailed, accurate...") - these don't change output quality and just add noise.
+Removed absolute/impossible asks ("every possible reason," "any kind of issue," "guaranteed fix," "solve this completely") - no model can guarantee a fix without more information, and open-ended scope produces vague, padded answers.
+Added a bounded scenario (device state, environment, what's already known) so the answer is specific rather than generic.
+Specified an output format ("numbered list," "two-sentence entry," "no preamble") so responses are consistent and easy to scan on a live call.

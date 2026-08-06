@@ -1,0 +1,70 @@
+TICKET ANALYSIS: T-1001 BitLocker Recovery Key Prompt on New Win11 Laptop
+===========================================================================
+
+SUMMARY
+-------
+New Windows 11 laptop prompting for BitLocker recovery key at every boot, blocking user logon.
+
+IMPACT
+------
+Who:          Single user (owner of new laptop)
+How many:     1 device affected
+Urgency:      HIGH - Impacts daily work; device unusable without recovery key input each boot
+Business:     User unable to independently start device; requires IT intervention each startup
+
+KNOWN FACTS
+-----------
+• New Windows 11 laptop
+• BitLocker is enabled
+• Recovery key prompt appears every boot
+• [to-verify] Whether device was domain-joined during deployment
+• [to-verify] Whether prompt appears before or after user logon screen
+
+MISSING INFORMATION TO GATHER
+-------------------------------
+1. [to-verify] Exact wording/error message displayed in recovery prompt
+2. [to-verify] When did issue start? (First boot, after update, after user activity?)
+3. [to-verify] Has TPM 2.0 been verified present and functional?
+4. [to-verify] BitLocker recovery ID shown in prompt (needed for diagnostics)
+5. [to-verify] Recent BIOS/firmware updates applied?
+6. [to-verify] Is device pre-encrypted (factory) or user-encrypted post-deployment?
+7. [to-verify] Other devices from same batch exhibiting same issue?
+8. [to-verify] Can user successfully provide recovery key and boot normally?
+
+LIKELY CATEGORY
+---------------
+Hardware/Firmware (TPM or UEFI) → Configuration (BitLocker settings) → Driver
+
+ROOT CAUSE POSSIBILITIES (to-verify)
+- TPM 2.0 not detected/initialized in UEFI
+- TPM firmware version incompatible with Win11 build
+- BitLocker MOR (Measured OS Recovery) enabled; detecting firmware changes
+- BIOS settings: Secure Boot, TCG/TPM disabled or misconfigured
+- BitLocker corruption or missing encryption key in TPM
+
+FIRST DIAGNOSTIC STEP
+---------------------
+1. Locally on device (with recovery key available):
+   • Open PowerShell as Admin
+   • Run: Get-Tpm
+   • Check: TPM present? Version? Ready status?
+   
+2. If TPM present and Ready:
+   • Run: manage-bde -status C:
+   • Capture: EncryptionMethod, ProtectionStatus, ConversionStatus
+   
+3. Document output and escalate to 2nd line with:
+   • TPM status output
+   • BitLocker status output
+   • Recovery ID from BitLocker prompt
+   • BIOS version (System Info or Dell/Lenovo/HP SupportAssist)
+
+DO NOT ATTEMPT (without 2nd line approval)
+-------------------------------------------
+• Disable BitLocker without recovery verification
+• Modify TPM or UEFI settings
+• Reinstall Windows/OS recovery without backup
+
+ESCALATION THRESHOLD
+--------------------
+If TPM missing, fails, or BitLocker status shows errors → escalate to 2nd line with diagnostics

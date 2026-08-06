@@ -1,0 +1,31 @@
+Summary (one line)
+User reports laptop performance degradation since this morning with Outlook not opening (spinning) on a recently issued Windows 11 device.
+
+Impact (who/how many/business urgency)
+- Affected user(s): Single end user (to confirm)
+- Scope: Outlook unusable for affected user; other apps reported as mostly OK (to confirm)
+- Business urgency: Potentially high if email access is required for role duties (to confirm)
+
+Known facts
+- Issue start time: Since this morning
+- Primary symptom: Cannot open Outlook; it spins
+- Other applications: "other apps ok i think" (to confirm)
+- Device context: New Windows 11 laptop issued last week
+
+Missing information to gather
+- User identity, team, and contact details
+- Exact timestamp/time zone when issue began
+- Whether issue is constant or intermittent
+- Whether Outlook opens in safe mode
+- Any error message/code or Event Viewer entry
+- Network status (on VPN/corporate LAN/home) and recent connectivity changes
+- Whether reboot has been attempted and outcome
+- Whether issue occurs with webmail/OWA
+- Current CPU, memory, and disk utilisation during symptom
+- Recent updates/changes (Windows update, Office update, policy/app install)
+
+Likely category
+- Endpoint Performance / Application (Outlook) Incident (to confirm)
+
+Suggest first diagnostic step
+- Capture a quick baseline on the affected device: have user reboot, then immediately test Outlook and record Task Manager CPU/RAM/disk while Outlook spins; in parallel verify whether email is accessible via OWA to isolate Outlook client vs mailbox/service path.

@@ -1,0 +1,74 @@
+TICKET ANALYSIS: T-1003 AVD Session Disconnects After ~10 min, Then Reconnects
+==================================================================================
+
+SUMMARY
+-------
+User's Azure Virtual Desktop (AVD) session disconnects and reconnects approximately every 10 minutes, causing work interruption and unsaved data risk.
+
+IMPACT
+------
+Who:          Single user (accessing AVD)
+How many:     1 user affected; [to-verify] if other users on same host pool affected
+Urgency:      MEDIUM-HIGH - Session instability; work disrupted; potential data loss if unsaved
+Business:     User unable to maintain productive session; workflow interruption every 10 min
+
+KNOWN FACTS
+-----------
+• User accessing AVD session
+• Session disconnects regularly (~10 min interval)
+• Session auto-reconnects
+• Pattern is consistent/predictable (every ~10 min)
+• [to-verify] Occurs on all AVD connections or specific host pool
+
+MISSING INFORMATION TO GATHER
+-------------------------------
+1. [to-verify] User's client device OS (Win10, Win11, macOS, thin client, browser)
+2. [to-verify] AVD client used (Microsoft Remote Desktop app, web client, Citrix Receiver)
+3. [to-verify] Session timeout setting in AVD Host Pool configuration
+4. [to-verify] Network: User's connection type (corporate LAN, VPN, home internet)
+5. [to-verify] Bandwidth: User's upload/download speed
+6. [to-verify] When did issue start? (New assignment, recent config change, new client version)
+7. [to-verify] Does issue occur on all AVD resources or specific applications within session?
+8. [to-verify] Error shown in session log or RDP disconnection message?
+9. [to-verify] Other users on same host pool experiencing similar issue?
+
+LIKELY CATEGORY
+---------------
+Network/connectivity → AVD host pool settings (timeout config) → Client application issue → Graphics/RDP bandwidth
+
+ROOT CAUSE POSSIBILITIES (to-verify)
+- Idle Timeout policy set to ~10 min; session terminating due to no input
+- Session Timeout set to 10 min; server-side disconnect
+- Network connectivity drop every 10 min (intermittent packet loss, VPN keepalive)
+- RDP Shortpath UDP connectivity unstable; falling back to TCP
+- Client application crash/hang triggering automatic disconnect
+- Graphics codec negotiation issue; connection reset on video sync
+- User VPN connection timing out without auto-reconnect
+- Firewall/proxy resetting idle connections at 10 min mark
+
+FIRST DIAGNOSTIC STEP
+---------------------
+1. Gather session timing data:
+   • User: Note exact local time of each disconnect over next 30 min (at least 3 occurrences)
+   • Check: Is it exactly 10 min or approximately variable?
+   • Document: What was user doing when disconnect occurred? (typing, idle, watching video?)
+
+2. Check AVD Host Pool settings (AVD admin access needed):
+   • Azure Portal → AVD → Host Pools → [user's pool] → Properties
+   • Review: Idle Session Timeout, Session Timeout, Disconnect Timeout settings
+   • Document: Which policy set to ~10 min?
+
+3. Test client/network:
+   • User: Test with different AVD client if available (web client vs Remote Desktop app)
+   • User: Check network stability (ping corporate gateway or DNS repeatedly for 5 min)
+   • Document: Does issue persist with different client?
+
+4. Review diagnostics:
+   • Check: AVD session logs in Azure Portal for disconnect reason codes
+   • Collect: RDP client logs from %temp% folder on user's local machine
+
+ESCALATION THRESHOLD
+--------------------
+If session timeout policy set to 10 min → adjust and retest
+If network disconnections detected → escalate to network team
+If still unresolved after timeout check → escalate to AVD/2nd line with client logs and timing data

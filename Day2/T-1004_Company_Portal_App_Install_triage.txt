@@ -1,0 +1,80 @@
+TICKET ANALYSIS: T-1004 Company App Fails to Install from Company Portal, Error 0x87D1041C
+================================================================================================
+
+SUMMARY
+-------
+User unable to install application from Intune Company Portal; installation fails with error code 0x87D1041C.
+
+IMPACT
+------
+Who:          Single user
+How many:     1 user affected; [to-verify] if error affects multiple users or devices
+Urgency:      MEDIUM - Blocks required application; work may be impacted depending on app purpose
+Business:     User cannot access required business application; productivity delayed
+
+KNOWN FACTS
+-----------
+• Application available in Company Portal
+• Installation attempted by user
+• Installation fails with error 0x87D1041C
+• [to-verify] Installation attempts are on corporate device and via corporate network
+• [to-verify] Device enrolled in Intune/MDM
+
+MISSING INFORMATION TO GATHER
+-------------------------------
+1. [to-verify] Full application name and version shown in Company Portal
+2. [to-verify] Device OS and version (Win10, Win11 build number)
+3. [to-verify] Application type: Win32, Microsoft Store, LOB app, or cloud app
+4. [to-verify] Has user successfully installed any other app from Company Portal recently?
+5. [to-verify] Is application intended for user's device type (desktop vs shared device)?
+6. [to-verify] Device enrollment status: fully enrolled, compliant, or flagged as non-compliant?
+7. [to-verify] Application availability in Company Portal: visible but install fails, or blocked/unavailable?
+8. [to-verify] Device free disk space (MB available on system drive)?
+9. [to-verify] Recent Windows Update, Intune agent update, or antivirus changes?
+
+LIKELY CATEGORY
+---------------
+Intune/MDM app distribution → Device compliance → Application packaging issue → Insufficient device resources
+
+ROOT CAUSE POSSIBILITIES (to-verify)
+- Device non-compliant with Intune policies; app blocked
+- Insufficient free disk space on device
+- Application superseded or removed from Company Portal during deployment
+- Application dependency missing (prerequisite runtime not installed)
+- Win32 app installer has side-by-side/architecture conflict (x86 vs x64)
+- Device antivirus blocking application installer silently
+- Application assignment removed or reassigned after publish; user not eligible
+- Intune sync pending; device has not yet refreshed app catalog
+- Win32 app detection rule failing; Intune thinks app already installed but hidden/broken
+
+FIRST DIAGNOSTIC STEP
+---------------------
+1. Verify user eligibility and device compliance:
+   • IT: Check Intune admin portal → Applications → [app name] → Assignments
+   • Verify: User/device group includes this user
+   • Check: Device compliance status (portal → Devices → Windows → [device])
+   • Document: Device compliant or non-compliant? Pending sync?
+
+2. Check device resources:
+   • User: Settings → System → Storage → [system drive] free space
+   • Document: Free space available (need at least 2-3 GB for most apps)
+
+3. Check application details:
+   • IT: Review application package type (Win32, MSIX, MSI, Store)
+   • IT: Check Intune logs for error details: Device → Troubleshooting + support → [app name]
+   • Document: Error 0x87D1041C — check if app installer exited with non-zero status
+
+4. Collect device diagnostics:
+   • User: Open Company Portal → Help and support → Send diagnostics
+   • User: Note date/time of send (for IT to correlate in Intune logs)
+   • User: Check Antivirus exclusions: is Company Portal in exclusion list?
+
+5. Test remediation:
+   • User: Sync Intune manually (Settings → Accounts → Access work or school → [account] → Info → Sync)
+   • Wait 5 min, retry app installation
+
+ESCALATION THRESHOLD
+--------------------
+If device non-compliant → check compliance policy first
+If insufficient disk space → user must free up space
+If still fails after remediation → escalate to 2nd line with Intune diagnostics logs and error details

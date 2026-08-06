@@ -1,0 +1,93 @@
+TICKET ANALYSIS: T-1008 VPN Connects but No Internal Resources Reachable After Win11 Upgrade
+================================================================================================
+
+SUMMARY
+-------
+User can establish VPN connection after Windows 11 upgrade, but cannot reach any internal network resources (shares, services, DNS names unresolvable).
+
+IMPACT
+------
+Who:          Single user
+How many:     1 user affected; [to-verify] other Win11-upgraded users affected
+Urgency:      HIGH - Complete loss of internal network access despite VPN connection; remote work impossible
+Business:     User cannot access internal resources; unable to work remotely; production blocked
+
+KNOWN FACTS
+-----------
+• Windows 11 upgrade completed
+• VPN client connects (connection shows "Connected")
+• Internal resources unreachable (file shares, servers, DNS names)
+• [to-verify] Can reach internet/external sites or only internal blocked
+• [to-verify] VPN client version post-upgrade same or updated
+
+MISSING INFORMATION TO GATHER
+-------------------------------
+1. [to-verify] Which VPN client (Cisco AnyConnect, Pulse Secure, FortiClient, custom, native IKEv2)?
+2. [to-verify] VPN client version pre-upgrade and post-upgrade (updated during Win11?
+3. [to-verify] VPN connection type (IPSec, SSL, L2TP, OpenVPN)?
+4. [to-verify] Can user ping internal IP (e.g., corporate gateway) or only DNS resolution fails?
+5. [to-verify] Device's IPv4/IPv6 configuration — does VPN assign IP address (check ipconfig)?
+6. [to-verify] Split tunneling configured or full tunnel? (Which traffic routes through VPN?)
+7. [to-verify] User on public WiFi, home network, or corporate office?
+8. [to-verify] VPN client connection shows IP address assigned, or blank/0.0.0.0?
+9. [to-verify] Firewall/antivirus software changed or installed during/after upgrade?
+10. [to-verify] VPN gateway/server responding? (Other users able to connect and work?)
+
+LIKELY CATEGORY
+---------------
+VPN client driver/compatibility → Network routing (split tunnel) → Firewall policy → DNS resolution
+
+ROOT CAUSE POSSIBILITIES (to-verify)
+- VPN client driver incompatible with Win11 kernel; client not passing packets
+- VPN client version outdated; requires update for Win11 compatibility
+- Network driver updated during Win11 upgrade; VPN client not compatible with new driver
+- Firewall policy blocking VPN traffic after upgrade (Windows Defender or 3rd-party)
+- VPN connection assigned IP, but split-tunnel routing misconfigured or disabled
+- VPN adapter not receiving DNS settings from VPN gateway
+- IPv6 blocking internal IPv4 traffic or routing priority changed post-upgrade
+- Windows 11 Recall/telemetry service blocking VPN traffic
+- VPN client certificate expired or revoked (rare but possible)
+- USB VPN dongle/hardware token driver not compatible with Win11
+
+FIRST DIAGNOSTIC STEP
+---------------------
+1. Confirm VPN connectivity state:
+   • User: Check VPN client UI — status shows "Connected" or "Disconnecting"?
+   • Document: Any error messages or warnings shown?
+   • Document: IP address assigned to VPN interface (shown in client or ipconfig)?
+
+2. Test internal network connectivity (once connected to VPN):
+   • Open PowerShell or Command Prompt
+   • Run: ipconfig /all
+     - Look for: VPN adapter (Ethernet pseudo-interface, Cisco Adapter, etc.)
+     - Document: IPv4 address assigned (should be in 10.x.x.x or 192.168.x.x range)
+     - Document: DNS Servers listed under VPN adapter
+   • Run: ping 8.8.8.8 (public DNS — should timeout or fail, confirming traffic through VPN)
+   • Run: ping [internal-gateway-ip] (e.g., ping 10.0.0.1 — should reply if connected)
+   • Run: ping [internal-hostname] (e.g., ping fileserver.corp.local — will test DNS)
+   • Document: Which pings succeed, which fail
+
+3. Check DNS resolution:
+   • Run: nslookup [internal-hostname] (e.g., nslookup fileserver.corp.local)
+   • Document: Does name resolve? To which IP address?
+   • Run: nslookup 8.8.8.0 (test external DNS)
+   • Document: Does external resolve? (Should fail if split-tunnel working correctly)
+
+4. Verify VPN client version and drivers:
+   • VPN client → Help/About — version number?
+   • Document: Is this latest version for Win11?
+   • Device Manager → Network adapters — any yellow warnings on VPN/TAP adapter?
+   • Document: Adapter status
+
+5. Test remediation:
+   • User: Disconnect and reconnect VPN (full disconnect, 10 sec wait, reconnect)
+   • Retest ping and nslookup after reconnect
+   • Document: Any change?
+
+ESCALATION THRESHOLD
+--------------------
+If VPN shows connected but no IP assigned → VPN server/gateway issue; escalate to network/VPN team
+If DNS fails but IP ping works → DNS configuration issue on VPN gateway; escalate to network team
+If IP ping fails → routing/split-tunnel misconfigured; escalate to VPN team with ipconfig output
+If VPN client version outdated for Win11 → update client and retest
+If persists after client update and reconnect → escalate to 2nd line with VPN client logs and network diagnostics

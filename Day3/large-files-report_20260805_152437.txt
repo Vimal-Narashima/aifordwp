@@ -1,0 +1,6 @@
+﻿Large File Report
+Generated: 2026-08-05 15:24:37
+Search Path: C:\Users\labuser\Documents\Training
+Threshold: 100 MB
+
+No files found at or above 100 MB.

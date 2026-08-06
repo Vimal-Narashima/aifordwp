@@ -1,0 +1,39 @@
+## PROMPT USED (Template 3 - Known-error records)
+
+You are a DWP service-desk analyst writing structured known-error records for the knowledge base. Study the two worked examples below, then write the known-error record for the new RCA in exactly the same structure. Only use facts present in the RCA — mark anything uncertain as "to confirm". Return only the record.
+
+Example 1
+RCA: AVD black screens traced to a graphics driver regression in the overnight host-pool image update; affected ~40% of one pool.
+Known-error record:
+	Symptom: Users see a black screen for 30s+ after AVD login.
+	Cause: Graphics driver regression in host image.
+	Scope: One host pool, image-update dependent.
+	Workaround: Move affected users to the healthy pool.
+	Permanent fix: Roll back/patch the image, re-test before redeploy.
+
+Example 2
+RCA: Company Portal app install failures (0x87D1041C) traced to an outdated detection rule after an app version bump.
+Known-error record:
+	Symptom: App shows 'failed' in Company Portal, error 0x87D1041C.
+	Cause: Detection rule not updated for new app version.
+	Scope: All devices assigned the app after the version bump.
+	Workaround: Manually reinstall via IT; not user-fixable.
+	Permanent fix: Update detection rule to match new version, redeploy.
+
+New RCA: Printer mapping lost for the whole 3rd floor after Win11 upgrade; logon script wasn't re-applied because it referenced the old OS drive path.
+
+---
+
+## OUTPUT
+
+Known-error record:
+
+Symptom: Printers are not mapped at logon for users on the 3rd floor following a Win11 upgrade.
+
+Cause: Logon script not re-applied post-upgrade; script referenced the old OS drive path, which is no longer valid under Win11.
+
+Scope: All 3rd floor users affected by the Win11 upgrade where the logon script path was not updated.
+
+Workaround: Manually map printers via IT for affected users; not user-fixable.
+
+Permanent fix: Update logon script to reference the correct Win11 OS drive path, test on a pilot device, then redeploy to all affected 3rd floor users.

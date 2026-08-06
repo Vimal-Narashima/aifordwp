@@ -1,0 +1,6 @@
+prompt
+---
+refer @file:Prompt-library.md which contains prompt templates with examples . using Closure Notes prompt write a Closure note for "AVD user couldn't connect; found their account was outside the assigned application group; added them; confirmed login."
+output
+---
+Closure Note: Root cause identified as the user account not being included in the assigned application group, which prevented AVD connection. The account was added to the correct group and login was confirmed afterwards. Permanent fix involves validating group membership for affected accounts before access is attempted; known-error record to be confirmed.

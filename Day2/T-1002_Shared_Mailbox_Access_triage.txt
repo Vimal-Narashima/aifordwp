@@ -1,0 +1,75 @@
+TICKET ANALYSIS: T-1002 Finance User Cannot Open Shared Mailbox After Migration
+====================================================================================
+
+SUMMARY
+-------
+Finance user unable to access previously available shared mailbox following mailbox migration.
+
+IMPACT
+------
+Who:          Single Finance user
+How many:     1 user affected; [to-verify] how many shared mailboxes impacted
+Urgency:      HIGH - Blocks access to team mailbox; Finance operations may be delayed
+Business:     Finance department workflows impacted; potential missed invoices/communications
+
+KNOWN FACTS
+-----------
+• Shared mailbox access worked before migration
+• Access lost after migration completed
+• User is Finance team member
+• [to-verify] Migration completed successfully for user's primary mailbox
+• [to-verify] User can access own mailbox
+
+MISSING INFORMATION TO GATHER
+-------------------------------
+1. [to-verify] When exactly did access stop? (During/after migration window?)
+2. [to-verify] Error message shown in Outlook/OWA when attempting to open shared mailbox
+3. [to-verify] User's mailbox location before migration (Exchange on-prem, cloud, hybrid)
+4. [to-verify] Shared mailbox location before and after migration
+5. [to-verify] Can other Finance users access the same shared mailbox?
+6. [to-verify] Has user's mailbox been fully migrated to target tenant/on-prem?
+7. [to-verify] User's mailbox permissions: Full Access granted to shared mailbox?
+8. [to-verify] Is shared mailbox in same tenant/forest as user post-migration?
+
+LIKELY CATEGORY
+---------------
+Exchange/Email permissions → Mailbox synchronization → Directory sync (AD sync delay)
+
+ROOT CAUSE POSSIBILITIES (to-verify)
+- User's permissions to shared mailbox not migrated
+- Shared mailbox mailbox-GUID mismatch or corruption
+- Directory sync delay: AD sync pending, not yet replicated to Exchange
+- User still has stale cache or connection to old Exchange server
+- Shared mailbox moved to different tenant; permissions not updated
+- Full Access delegation missing post-migration
+
+FIRST DIAGNOSTIC STEP
+---------------------
+1. Confirm access scope (OWA only? Outlook desktop too?):
+   • Test: User attempts to open shared mailbox in both OWA and Outlook desktop
+   • Document: Which clients fail, which work (if any)
+
+2. Verify user's primary mailbox post-migration:
+   • User: Check "Outlook Home" settings in OWA — what tenant/server shown?
+   • IT: Confirm user mailbox migration completed; no longer on source server
+
+3. Check shared mailbox properties:
+   • IT: Run PowerShell on target system (Exchange Online or on-prem):
+     - Get-Mailbox -Identity [shared-mailbox-name] | Select DisplayName, Database, Guid
+     - Get-MailboxPermission -Identity [shared-mailbox-name] -User [finance-user] | Select AccessRights, User
+   • Capture: AccessRights = "FullAccess" for user?
+   
+4. Document findings and escalate if:
+   • Permissions missing or not showing correct rights
+   • Shared mailbox GUID differs from expected
+   • Migration logs show errors
+
+DO NOT ATTEMPT (without 2nd line approval)
+-------------------------------------------
+• Manually re-grant permissions without verifying root cause
+• Force re-sync without checking migration status
+• Remove/re-add user mailbox without backup
+
+ESCALATION THRESHOLD
+--------------------
+If user lacks Full Access permission, shared mailbox not found, or migration incomplete → escalate to 2nd line with diagnostics

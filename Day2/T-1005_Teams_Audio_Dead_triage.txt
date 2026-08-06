@@ -1,0 +1,86 @@
+TICKET ANALYSIS: T-1005 Teams Audio Dead on Three Machines in the Same Meeting Room
+======================================================================================
+
+SUMMARY
+-------
+Audio functionality non-operational in Microsoft Teams on three devices in the same physical meeting room; other users can hear, but room users cannot.
+
+IMPACT
+------
+Who:          Three users in same meeting room
+How many:     3 devices affected in 1 location
+Urgency:      HIGH - Full meeting room unable to participate in audio-based collaboration
+Business:     Entire team meeting room offline for audio; meeting effectiveness severely compromised; possible business impact if recurring
+
+KNOWN FACTS
+-----------
+• Issue affects exactly three devices in same room
+• Location: Same physical meeting room
+• Audio not working in Teams (calls/meetings)
+• [to-verify] All three devices isolated from room audio/video system or independent?
+• [to-verify] Other users outside room can hear the three users or not
+• [to-verify] Issue is Teams-specific or affects all audio on devices
+
+MISSING INFORMATION TO GATHER
+-------------------------------
+1. [to-verify] Device types: laptops, desktops, Teams Rooms system, thin clients?
+2. [to-verify] Is meeting room equipped with shared audio system (meeting room speakers/mic)?
+3. [to-verify] Are the three devices connected to shared meeting room audio hardware?
+4. [to-verify] When did audio stop working? (Specific time, recent event, or gradual?)
+5. [to-verify] Audio works on one device but not others, or all three completely silent?
+6. [to-verify] Microphone and speakers both dead, or one or the other?
+7. [to-verify] Do devices show any audio device in Sound Settings, or listed as disabled?
+8. [to-verify] Were there recent Windows Updates, driver updates, or room AV changes?
+9. [to-verify] Does audio work outside Teams (system sounds, YouTube, Zoom)?
+
+LIKELY CATEGORY
+---------------
+Hardware/audio driver (shared meeting room system) → Audio settings misconfiguration → Teams client issue → Network/VoIP codec
+
+ROOT CAUSE POSSIBILITIES (to-verify)
+- Shared meeting room audio system powered off or disconnected
+- Audio driver disabled/corrupted on all three devices (same image or recent update)
+- USB meeting room audio device not recognized or driver missing on all three
+- Teams audio input/output configured to disabled or null device (group policy applied)
+- Meeting room audio system unplugged from network/power or reset
+- VoIP codec or audio pathway blocked by firewall/network policy
+- Bluetooth audio device connected on all three devices, blocking microphone input
+- Meeting room audio system firmware update failed or incompatible with device drivers
+- Audio hardware conflicting with VPN client or antivirus software
+
+FIRST DIAGNOSTIC STEP
+---------------------
+1. Isolate scope (device issue vs room system issue):
+   • Step 1a: On one device, check Sound Settings:
+     - Settings → System → Sound → [choose device dropdown under Input/Output]
+     - Document: Any audio devices listed? Enabled or disabled?
+   • Step 1b: Test audio on device OUTSIDE the room:
+     - Walk one device out of room, test Teams audio in hallway or different room
+     - Document: Does audio work remotely or only fails in this room?
+
+2. Check meeting room audio system:
+   • Verify: Meeting room audio system powered on, connected, and active
+   • Verify: USB/network cables seated firmly; no indicators of failure
+   • Test: Unplug and re-seat main audio device; wait 30 sec, power back on
+
+3. Check Teams device settings:
+   • On affected device: Teams → Settings → Devices → Audio devices
+   • Document: Which input/output device selected? Is it "Default" or specific hardware?
+   • Test: Switch input to different device if available (e.g., built-in mic vs room system)
+   • Test: Make short test call; check if audio works with alternate device
+
+4. Check for policy/driver changes:
+   • Review: Recent Windows Updates on devices (Settings → Update History)
+   • Review: Audio driver status in Device Manager (Audio inputs and outputs)
+   • Document: Any devices with yellow warning triangle or unknown device?
+
+5. Widen context:
+   • Ask: Have ANY devices in this room successfully used Teams audio today, or all three failed all day?
+   • Ask: Does issue affect only Teams or all room audio (Windows system sounds, Zoom, etc.)?
+
+ESCALATION THRESHOLD
+--------------------
+If room audio system appears offline or damaged → escalate to facilities/AV team
+If all devices show audio disabled by policy → check Group Policy and escalate to desktop team
+If audio works on device outside room → meeting room audio system issue; escalate to AV team
+If remains unresolved → escalate to 2nd line with device audio logs and meeting room system status

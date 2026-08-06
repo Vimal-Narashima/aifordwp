@@ -1,0 +1,13 @@
+Likely causes on a Windows 11 laptop:
+1. High background resource usage (Windows Update, Defender scan, OneDrive sync, Teams/browser tabs).
+2. Low free disk space or failing storage performance.
+3. Startup/app bloat causing sustained CPU/RAM pressure after logon.
+4. Recent patch/driver issue (especially graphics, chipset, or endpoint security agent contention).
+
+3 questions to ask:
+1. "When is it slow: at startup, all day, or only in specific apps?"
+2. "Did this start after a recent change (Windows update, new software, VPN/security tool update)?"
+3. "Is the slowness constant or intermittent, and does it improve after a reboot?"
+
+First diagnostic step:
+Open Task Manager (Ctrl+Shift+Esc) and sort by CPU, Memory, and Disk to identify the top process during a slow period; this immediately tells you whether the bottleneck is compute, RAM pressure, or storage I/O.

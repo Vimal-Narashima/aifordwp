@@ -1,0 +1,89 @@
+TICKET ANALYSIS: T-1006 'Everything is Slow' — User Upgraded to Win11 Two Days Ago
+===================================================================================
+
+SUMMARY
+-------
+User reports significant overall system slowness across all applications following Windows 11 upgrade two days ago; subjective "everything is slow" complaint.
+
+IMPACT
+------
+Who:          Single user
+How many:     1 device affected
+Urgency:      MEDIUM - Entire workflow degraded; user productivity impacted; subjective severity unclear
+Business:     User reporting system unusable for normal tasks; follow-up needed to scope actual bottleneck
+
+KNOWN FACTS
+-----------
+• Windows 11 upgrade completed ~2 days ago
+• Issue began after upgrade (likely causally related)
+• Complaint: Global slowness ("everything")
+• [to-verify] Specific applications slow or entire system
+• [to-verify] Device specs (CPU, RAM, disk type) suitable for Win11
+• [to-verify] Previous OS version (Win10 build)
+
+MISSING INFORMATION TO GATHER
+-------------------------------
+1. [to-verify] User's device specs: CPU model, RAM (GB), storage type (SSD/HDD), disk free space
+2. [to-verify] Which applications specifically slow? (All, or specific ones like Outlook, browser, Office?)
+3. [to-verify] Slowness during launch or continuous during use?
+4. [to-verify] Win11 system update status: fully patched, or pending updates?
+5. [to-verify] Post-upgrade driver installed for audio, graphics, chipset?
+6. [to-verify] Antivirus/security software installed and running? Which product?
+7. [to-verify] Device experiencing high disk usage, CPU, or memory utilization observed?
+8. [to-verify] VPN connected? Same slowness on corporate LAN vs WiFi?
+9. [to-verify] Background tasks/services: search indexing, Windows updates still running?
+
+LIKELY CATEGORY
+---------------
+Driver compatibility (graphics, chipset) → Resource exhaustion (disk, CPU) → Antivirus impact → Background service (Windows Update, search)
+
+ROOT CAUSE POSSIBILITIES (to-verify)
+- Graphic driver not optimized for Win11 or causing high GPU utilization
+- Intel Management Engine or chipset driver not installed or needs update
+- Windows Update or background indexing consuming CPU/disk during post-upgrade phase
+- Antivirus real-time scanning performing first-run full scan post-upgrade
+- Insufficient free disk space preventing OS optimization post-upgrade
+- Legacy hardware (e.g., older CPU) unsuitable for Win11; hardware inadequacy
+- Cloud sync (OneDrive, Teams) processing large file changes post-upgrade
+- Power plan set to "Power Saver" after upgrade instead of "High Performance"
+- Startup programs auto-launching consuming resources
+- Device still performing Win11 telemetry setup and profiling
+
+FIRST DIAGNOSTIC STEP
+---------------------
+1. Establish baseline performance metrics:
+   • Device: Open Task Manager (Ctrl+Shift+Esc) → Performance tab
+   • Document: CPU % (current and max in past 5 min), Memory %, Disk %, GPU %
+   • Document: Is one resource consistently high or bouncing around?
+
+2. Identify the bottleneck:
+   • Open Task Manager → Processes tab
+   • Sort by: CPU % (desc) — which process using most CPU? Normal or expected?
+   • Sort by: Memory — which process consuming most RAM?
+   • Sort by: Disk % — is disk thrashing (near 100% sustained)?
+   • Screenshot or document top 3 processes in each category
+
+3. Check system status post-upgrade:
+   • Settings → System → About — Windows 11 edition, build number shown?
+   • Settings → Windows Update → Update history — any failed updates?
+   • Open Storage (Settings → System → Storage):
+     - Free space available? (<5 GB is concerning post-upgrade)
+   • Check: Is Windows Update or search indexing running in background?
+     - Services.msc → look for "Windows Update", "Windows Search" status
+
+4. Verify driver installation:
+   • Device Manager → Devices — any yellow warnings or unknown devices?
+   • Check: Display adapter, chipset, audio driver status
+
+5. Test system:
+   • Restart device (allows background processes to settle)
+   • Retest performance 5 min after logon
+   • Document: Any improvement post-restart?
+
+ESCALATION THRESHOLD
+--------------------
+If single resource (CPU, disk, memory) consistently at 90%+ → escalate to 2nd line with Task Manager snapshot
+If antivirus performing full scan → wait for completion; should resolve in 4-24 hrs
+If free disk space <5 GB → user must free up space
+If drivers missing (yellow devices in Device Manager) → device manufacturer/2nd line support for drivers
+If slowness persists after restart and optimization attempts → escalate to 2nd line with performance data and driver status
