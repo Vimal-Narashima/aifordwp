@@ -1,0 +1,146 @@
+AVD Incident Analysis - Black Screen Post Login
+Date: 2026-08-06
+Analyst context: DWP endpoint/AVD triage
+
+Scope Facts
+- Symptom: blank screen post login; clears after ~30s for some users; persists for others.
+- Who: ~40% of users on POOL-FIN-01. POOL-FIN-02 unaffected.
+- Since: ~07:00 this morning.
+- Change: Overnight image update to POOL-FIN-01 at 02:00. POOL-FIN-02 not updated.
+
+Timing-Weighted Hypothesis Statement
+The strongest signal is pool isolation after a pool-specific image change:
+- Only POOL-FIN-01 changed at 02:00.
+- Only POOL-FIN-01 shows symptoms from ~07:00.
+- POOL-FIN-02 is completely unaffected.
+This pattern strongly favors an image-introduced regression on POOL-FIN-01 over shared platform causes.
+
+Most Consistent Cause With The Timing Clue
+1) FSLogix/profile attach regression introduced by the new POOL-FIN-01 image.
+Reason: Pool-specific, post-login black screen, and split behavior (temporary vs persistent) are highly consistent with profile attach delay/error variance.
+Fastest single check: Correlate FSLogix container attach events/errors to the black-screen interval on affected POOL-FIN-01 hosts.
+
+Re-ranked Top 5 Causes (Most Probable First)
+1) FSLogix/profile attach regression in updated image
+- Why it fits: Best match to update-isolation pattern and symptom shape.
+- Fastest check: FSLogix Operational log correlation for attach delay/failure during affected logons.
+
+2) Shell initialization regression in updated image (Explorer/AppX/user shell stack)
+- Why it fits: Image-local post-auth desktop render issue; would not hit untouched POOL-FIN-02.
+- Fastest check: Launch explorer.exe during black screen; immediate desktop indicates shell-init fault path.
+
+3) New synchronous logon processing introduced/activated by updated image context (GPO CSE/logon script/task)
+- Why it fits: Can cause ~30s post-login delay; user-targeted scope explains ~40% impact.
+- Fastest check: Compare resultant policy/logon actions for same user between POOL-FIN-01 and POOL-FIN-02.
+
+4) AVD host agent/component version skew on refreshed POOL-FIN-01 hosts
+- Why it fits: Image refresh can introduce component mismatch isolated to updated pool.
+- Fastest check: Compare AVD agent/bootloader versions and service health between bad FIN-01 host and good FIN-02 host.
+
+5) Host resource contention from image first-run/background tasks (AV scan/indexing/provisioning)
+- Why it fits: Update-only background load can create transient black screen; weaker fit for persistent cases.
+- Fastest check: Capture CPU, disk latency, and top processes during reproducing logon on impacted FIN-01 host.
+
+Analytical Guardrail
+- Do not commit to a single root cause yet.
+- Prioritize quick discriminating checks above to narrow to 1-2 candidates before deep dive.
+
+--------------------------------------------------------------------
+APPENDIX A - Event Evidence Review and Hypothesis Elimination
+Added: 2026-08-06
+
+Evidence Reviewed
+- Affected host: SHFIN-01-A (POOL-FIN-01)
+- Time window: 07:00-07:30
+- Sources: Application + System logs
+- Comparison host: SHFIN-02-A (POOL-FIN-02, unaffected)
+
+Key Event Sequence Observed on SHFIN-01-A
+- 07:02:10 - TerminalServices-LocalSessionManager Event 21: Session logon succeeded (FINBRIDGE\mlopez, Session 3)
+- 07:02:14 - Kernel-General Event 1: Boot time 02:03:11 (host restarted after overnight image update)
+- 07:02:16 - Application Error Event 1000: dwm.exe faulting in igdumd64.dll, exception 0xc0000005
+- 07:02:17 - TerminalServices-LocalSessionManager Event 40: Session disconnected
+- 07:02:18 - Desktop Window Manager Event 9009: DWM exited with code 0x40010004
+- 07:02:44 - Event 21: Session logon succeeded (reconnect)
+- 07:02:46 - Event 1000: dwm.exe faulting in igdumd64.dll, exception 0xc0000005
+- 07:02:47 - Event 40: Session disconnected
+- 07:03:01 - Event 9009: DWM exited with code 0x40010004
+- 07:03:10 - Event 21: Session logon succeeded (second reconnect)
+- 07:08:22 - Event 21: Session logon succeeded (FINBRIDGE\akapoor)
+- 07:08:24 - Event 1000: dwm.exe faulting in igdumd64.dll, exception 0xc0000005
+
+Comparison Signal on SHFIN-02-A (unaffected)
+- 07:01:44 - Event 21: Session logon succeeded
+- 07:01:46 - Desktop Window Manager Event 9011: DWM started successfully
+- No Application Error Event 1000 in reviewed window
+
+Hypothesis Review Against Evidence
+1) FSLogix/profile attach regression in updated image
+- Judgement: Contradicts (for the provided host sample)
+- Determining evidence: Event 21 at 07:02:10 followed by Event 1000 at 07:02:16 and Event 40 at 07:02:17; repeated at 07:02:44/07:02:46/07:02:47.
+
+2) Shell initialization regression in updated image (Explorer/AppX/user shell stack)
+- Judgement: Supports
+- Determining evidence: Repeated Event 1000 (07:02:16, 07:02:46, 07:08:24) and Event 9009 (07:02:18, 07:03:01) after successful Event 21 logons.
+
+3) New synchronous logon processing (GPO/script/task)
+- Judgement: Contradicts
+- Determining evidence: Immediate crash/disconnect sequence after logon success (Event 21 -> Event 1000 -> Event 40) indicates failure mode is crash-led, not extended synchronous processing.
+
+4) AVD host agent/component version skew on refreshed hosts
+- Judgement: Supports (indirect)
+- Determining evidence: Kernel-General Event 1 at 07:02:14 confirms post-update reboot state; affected host repeatedly logs Event 1000 while unaffected host logs Event 9011 and no Event 1000.
+
+5) Resource contention from first-run/background tasks
+- Judgement: Contradicts
+- Determining evidence: Deterministic crash signatures (Event 1000 with igdumd64.dll and exception 0xc0000005) with DWM exits (Event 9009), not simple delay-only behavior.
+
+Interim Elimination Outcome
+- Surviving primary hypothesis from this evidence set:
+	DWM/shell initialization failure caused by graphics stack regression in updated POOL-FIN-01 image (dwm.exe faulting in igdumd64.dll).
+
+--------------------------------------------------------------------
+APPENDIX B - Detailed Resolution Steps (Post-Elimination)
+Added: 2026-08-06
+
+Objective
+- Restore stable sign-in experience on POOL-FIN-01 while preserving rollback safety.
+
+1) Immediate containment
+- Drain affected POOL-FIN-01 hosts from new sessions.
+- Route new user sessions to POOL-FIN-02 while mitigation is implemented.
+
+2) Confirm fault baseline per affected host
+- Validate sequence: Event 21 -> Event 1000 (dwm.exe / igdumd64.dll) -> Event 40 -> Event 9009.
+- Record impacted host list and observed driver version in fault entries.
+
+3) Pilot mitigation on one affected host
+- Enforce software rendering path for RDS sessions (disable hardware graphics adapter use for RDS session rendering).
+- Reboot pilot host.
+- Re-test with multiple previously impacted users.
+
+4) Pilot success criteria
+- No new Application Error Event 1000 for dwm.exe faulting in igdumd64.dll during sign-in window.
+- No disconnect Event 40 within 60 seconds after logon success Event 21.
+
+5) Temporary pool-wide mitigation (if pilot succeeds)
+- Apply same rendering mitigation across POOL-FIN-01.
+- Reboot in controlled waves to maintain capacity.
+
+6) Permanent image correction
+- Rebuild from last known-good image baseline.
+- Remove/rollback problematic graphics driver package associated with faults.
+- Pin a known-stable display stack version for next image release.
+- Publish corrected image and block the faulty image from future assignment.
+
+7) Controlled redeployment
+- Deploy corrected image to canary subset of POOL-FIN-01 hosts.
+- Observe through one full business cycle before phased expansion.
+
+8) Closure validation gates
+- Zero Event 1000 (dwm.exe + igdumd64.dll) in target window.
+- Zero DWM Event 9009 during user sign-in.
+- User-reported black screen incidence returns to baseline.
+
+9) Backout criteria
+- If any validation gate fails, stop rollout and revert affected hosts to known-good image.
