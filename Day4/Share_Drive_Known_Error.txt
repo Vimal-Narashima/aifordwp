@@ -1,0 +1,11 @@
+Symptom: Finance users on DESKTOP-FB* devices cannot access the mapped Finance shared drive and S: is not mapped. Users are unable to open, save, or retrieve files from \\finbridge-fs01\Finance during the incident window.
+
+Cause: The verified root cause is execution-context mismatch after migration from USER-context GPO logon mapping to SYSTEM-context Intune script execution, without updating for SYSTEM startup behavior. The mapping ran before required network readiness and in a context unsuitable for per-user mapped-drive behavior, with no retry configured.
+
+Scope: Affected users were 45 Finance users. Affected systems were DESKTOP-FB* devices in OU=Finance, impacting access to \\finbridge-fs01\Finance.
+
+Workaround: Restore mapping through user-appropriate sign-in execution flow and verify access after user logon. This was the recovery approach used to restore service.
+
+Permanent fix: Keep per-user drive mapping in USER context and add startup resiliency controls (readiness checks plus bounded retry/backoff and secondary trigger on sign-in/network available). Add change-control safeguards for execution-context migrations, including checklist, peer review/sign-off, and pilot validation.
+
+How to spot it: Look for Intune Management Extension ScriptRunner sequence around startup: executing Map-FinBridgeDrives.ps1, SYSTEM context, warning that \\finbridge-fs01\Finance is not accessible, and error "Network name cannot be found" with exit code 1 and "No retry configured." Correlate with System log signals: Service Control Manager Event ID 7036 (Workstation service enters running state after failure), GroupPolicy Event ID 1500 (GP successful), and Ntfs Event ID 98 (S: could not be mapped).

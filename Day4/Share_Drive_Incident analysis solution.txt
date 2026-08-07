@@ -1,0 +1,83 @@
+Incident Analysis with Hypotheses and Possible Solutions
+Incident: Finance team cannot access shared drives (45 users)
+Date analysed: 2026-08-07
+Scope: DESKTOP-FB* devices, OU=Finance
+
+Evidence Timeline (provided)
+- [08:00:01] ScriptRunner Info: Executing Map-FinBridgeDrives.ps1
+- [08:00:02] ScriptRunner Info: Script context = SYSTEM account
+- [08:00:03] ScriptRunner Warning: \\finbridge-fs01\Finance not accessible from SYSTEM context
+- [08:00:03] ScriptRunner Error: Exit code 1, Network name cannot be found
+- [08:00:04] ScriptRunner Info: No retry configured
+- [08:00:05] Service Control Manager Event ID 7036: Workstation service entered running state
+- [08:00:06] GroupPolicy Event ID 1500: Group Policy processed successfully
+- [08:00:07] Ntfs Event ID 98: Could not map drive letter S:
+- Prior change (2024-03-14 23:30): Mapping moved from GPO logon script (USER context) to Intune script (SYSTEM context), script not updated for SYSTEM behavior
+
+Hypothesis 1: The file server/share was unavailable at login time.
+Judgement: Supports.
+Why:
+- ScriptRunner Error at [08:00:03]: "Network name cannot be found." (directly supports path/server reachability failure at execution time)
+- ScriptRunner Warning at [08:00:03]: "\\finbridge-fs01\Finance not accessible from SYSTEM context." (supports inability to reach share at that moment)
+- Note: Intune ScriptRunner lines do not provide an Event ID; timestamps are present and used.
+Possible solution:
+- Validate DNS/name resolution and SMB connectivity to \\finbridge-fs01 from Finance endpoints at startup and user session time.
+- Add a pre-check in script (Test-Path/Test-NetConnection to SMB 445) and log explicit failure reason.
+- If intermittent, implement delayed start plus retry/backoff before final failure.
+
+Hypothesis 2: Script failure is caused by running in SYSTEM context instead of USER context.
+Judgement: Supports.
+Why:
+- ScriptRunner Info at [08:00:02]: script runs as SYSTEM.
+- ScriptRunner Warning/Error at [08:00:03]: share not accessible from SYSTEM context, then mapping fails.
+- Prior change at [2024-03-14 23:30] explicitly states migration to SYSTEM context without script updates.
+Possible solution:
+- Move drive mapping back to USER-context execution (Intune user script, logon scheduled task in user context, or policy-based user mapping).
+- If SYSTEM execution must remain, do not use per-user mapped drives; use alternate design (for example, deploy shortcuts/UNC paths and enforce access via user token at session level).
+- Refactor script to detect context and exit with controlled remediation guidance when not in USER context.
+
+Hypothesis 3: Startup timing/race condition (Workstation service not ready when script runs) caused failure.
+Judgement: Supports.
+Why:
+- Script fails at [08:00:03].
+- Service Control Manager Event ID 7036 at [08:00:05] shows Workstation service enters running state after script failure.
+- Ordering suggests script attempted UNC access before the SMB client stack was fully ready.
+Possible solution:
+- Add dependency/wait logic in deployment method: run mapping only after Workstation service is running.
+- Add startup delay (for example 30-90 seconds) and retry loop (for example 3-5 attempts with exponential backoff).
+- Re-trigger mapping at user sign-in and/or network-change event.
+
+Hypothesis 4: Group Policy processing failure caused the issue.
+Judgement: Contradicts.
+Why:
+- GroupPolicy Event ID 1500 at [08:00:06] states settings processed successfully.
+- Provided note also states this is not a GP issue.
+Possible solution:
+- No GP remediation required for root cause.
+- Keep GP health checks as a control, but focus engineering effort on script context and execution timing.
+
+Hypothesis 5: Drive letter assignment conflict (S:) is primary cause.
+Judgement: Neutral.
+Why:
+- Ntfs Event ID 98 at [08:00:07] indicates S: was not mapped/assigned.
+- This can be downstream of the earlier UNC access failure at [08:00:03], so evidence is not sufficient to prove conflict as primary cause.
+Possible solution:
+- Add logic to detect existing S: usage before mapping and select fallback letter when needed.
+- Clean stale mappings on sign-in before remapping.
+- Log whether S: is occupied versus unavailable due to upstream network/authentication failure.
+
+Hypothesis 6: Lack of retry logic converted a transient startup issue into a user-visible outage.
+Judgement: Supports.
+Why:
+- ScriptRunner Info at [08:00:04]: "No retry configured."
+- Combined with Event ID 7036 at [08:00:05], the environment became more ready shortly after first failure, but no second attempt occurred.
+Possible solution:
+- Implement retries with bounded attempts and clear logging.
+- Add a secondary trigger (user logon or scheduled retry task) to self-heal without Service Desk intervention.
+- Record outcome telemetry for each attempt to improve future triage speed.
+
+Interim conclusion (no winner selected)
+- Multiple hypotheses are supported by the evidence, especially SYSTEM-context execution, service-readiness timing, and absence of retry.
+- GP failure is contradicted.
+- Drive-letter conflict remains plausible but unproven as primary cause with current data.
+- Additional targeted data (DNS/SMB tests at startup and user session, mapping behavior in USER context) is needed before selecting a single winning hypothesis.

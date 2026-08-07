@@ -1,0 +1,12 @@
+Share Drive Closure Communications
+Date: 2026-08-07
+Incident: Finance shared drive access outage (resolved)
+
+Audience 1 - Non-technical executive
+Your access is restored and your data is safe. Earlier, 45 Finance users could not open the Finance shared drive because a prior setup change ran the drive connection too early and without the signed-in user, and there was no automatic second try. We corrected the setup to run in the right user sign-in flow with startup checks/retry and confirmed access by successful user sign-in and drive use. No action is needed; contact Service Desk only if it happens again.
+
+Audience 2 - Affected end-user team (non-technical)
+Good news: access is back and your data is safe. Earlier, 45 Finance users could not open the Finance shared drive because a previous setup change made the drive connection run too early and not in the signed-in user step, with no automatic second try. We fixed this by putting the connection back in the correct sign-in flow and adding startup checks/retry, then verified by successful user sign-in and drive access. If you see this again, contact the Service Desk.
+
+Audience 3 - Engineer-to-engineer internal note
+Resolved and closed. Same facts for technical handoff: 45 Finance users lost access to Finance share after config drift from USER-context GPO logon mapping to SYSTEM-context Intune execution; mapping fired too early in startup sequence and without user token behavior, and no retry path existed. Exact corrective action applied: restored user-appropriate sign-in mapping path plus startup resiliency controls (readiness checks and retry). Verification step: successful user logon and confirmed shared-drive access post-change. Preventive action required: keep per-user mappings in USER context, enforce readiness checks + retry, and gate future context-migration changes through checklist/pilot review.

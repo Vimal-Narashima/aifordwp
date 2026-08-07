@@ -1,0 +1,49 @@
+L1 Self-Service: I Cannot Access My Finance Shared Drive
+v 1.0, 07/08/2026, status : Draft
+
+If your Finance shared drive is missing or not opening, follow these steps in order. Your files are safe. This issue usually affects how the drive appears, not the data stored in it.
+
+1. Save your open work in other apps.
+Expected result: You are ready to sign out without losing unsaved changes.
+
+2. Close File Explorer windows.
+Expected result: No folder windows are left open.
+
+3. Sign out of Windows.
+Expected result: You return to the sign-in screen.
+
+4. Wait 60 seconds before signing in again.
+Expected result: The computer has time to finish startup checks.
+
+5. Sign in again with your normal work account.
+Expected result: Your desktop loads normally.
+
+6. Open File Explorer and check for the Finance drive (S:).
+Expected result: The drive is visible.
+
+7. Open the Finance drive and open one folder.
+Expected result: Folders and files open normally.
+
+8. If the drive is still missing, restart your computer once.
+Expected result: The computer restarts and you can sign in again.
+
+9. After restart, check the Finance drive again.
+Expected result: The drive appears and opens.
+
+10. If you are working from home, confirm your work VPN shows connected.
+Expected result: VPN status shows connected.
+
+11. Check the Finance drive one final time.
+Expected result: The drive is available.
+
+Contact the service desk if the Finance drive is still missing, opens with an error, or disappears again after sign-in.
+
+When raising a ticket, include these details:
+- Your full name
+- Your username
+- Your device name (shown on company asset label)
+- Your office location or "working from home"
+- The exact time the issue started
+- What you already tried from this guide
+- A screenshot of the error message (if any)
+- Whether colleagues near you have the same issue

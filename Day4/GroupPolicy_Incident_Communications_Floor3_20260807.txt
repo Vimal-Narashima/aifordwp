@@ -1,0 +1,30 @@
+Incident Communications - Same Facts, Different Audiences
+Date: 2026-08-07
+
+Audience 1 - Non-technical executive (under 80 words)
+Your access and data are safe. On 2024-03-15, 3 of 4 Floor 3 Finance Windows 11 devices could not apply sign-in settings because they were given an old name-service address (10.10.3.250) after a 02:00 migration; one comparison device had the correct new address (10.10.0.10). We corrected the address source, removed the old value, refreshed affected devices, and verified successful user login with no further issues. No action needed unless this reappears.
+
+Audience 2 - Affected end-user team (under 100 words)
+Quick update: your access and data are safe. On 2024-03-15, 3 of 4 Floor 3 Finance Windows 11 devices could not apply sign-in settings because they were given an old name-service address (10.10.3.250) after a 02:00 migration, while one comparison device had the correct new address (10.10.0.10). We fixed the address source, removed the old value, refreshed affected devices, and verified successful user login with no further issues. If you see this again, contact the Service Desk and mention the Floor 3 sign-in settings incident.
+
+Audience 3 - Engineer-to-engineer internal note
+Root cause:
+- 2024-03-15 startup failures on 3/4 Floor 3 Finance Win11 clients were caused by stale name-service assignment: old 10.10.3.250 delivered post 02:00 migration retirement; comparator host used correct 10.10.0.10.
+
+Exact action taken:
+- Corrected assignment source to deliver 10.10.0.10.
+- Removed old 10.10.3.250 reference from delivery path.
+- Refreshed affected client network config and re-tested sign-in settings processing.
+
+Config detail:
+- Old value: 10.10.3.250.
+- Correct value: 10.10.0.10.
+- Comparator behavior: host with 10.10.0.10 remained unaffected.
+
+Verification step:
+- Confirmed successful user login to host after remediation.
+- No additional issues reported; incident marked resolved.
+
+Preventive action needed:
+- Add mandatory post-change validation of client-assigned name-service values per subnet.
+- Add automated checks/alerts for stale retired address references and recurring startup failure pattern.

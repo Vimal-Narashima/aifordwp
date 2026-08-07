@@ -1,0 +1,155 @@
+Root Cause Analysis (RCA)
+Incident: Finance Team Unable to Access Shared Drives
+Document ID: RCA-SHAREDRIVE-FIN-20260807
+Date: 2026-08-07
+Status: Closed (Service Restored)
+
+1. Executive Summary
+At start of business, Finance users on DESKTOP-FB* devices were unable to access the mapped Finance shared drive. The issue affected 45 users and presented as missing/unavailable mapped drive access. Investigation confirmed a failure path introduced by a prior implementation change: drive mapping execution moved from USER-context GPO logon processing to SYSTEM-context Intune script execution, without compensating for startup timing and token/context behavior. This caused the mapping script to execute before required network conditions were reliably available and in a security context unsuitable for user mapped-drive behavior.
+
+A corrective resolution was applied (re-aligned mapping to user-appropriate execution behavior and startup resiliency), and successful service restoration was verified by confirmed user logon and access validation.
+
+2. Business Impact
+- Affected population: 45 Finance users.
+- Affected service: Access to Finance shared drive path \\finbridge-fs01\Finance.
+- User impact: Inability to open, save, and retrieve Finance data from mapped drive location during incident window.
+- Operational impact: Service desk triage escalation, user productivity loss, and increased support volume.
+
+3. Detection and Initial Symptoms
+Primary indicators from provided logs/events:
+- [08:00:01] ScriptRunner Info: Executing Map-FinBridgeDrives.ps1
+- [08:00:02] ScriptRunner Info: Script context = SYSTEM account
+- [08:00:03] ScriptRunner Warning: \\finbridge-fs01\Finance not accessible from SYSTEM context at execution time
+- [08:00:03] ScriptRunner Error: Exit code 1, "Network name cannot be found"
+- [08:00:04] ScriptRunner Info: No retry configured
+- [08:00:05] Service Control Manager Event ID 7036: Workstation service entered running state
+- [08:00:06] GroupPolicy Event ID 1500: Group Policy settings processed successfully
+- [08:00:07] Ntfs Event ID 98 Warning: Could not map drive letter S:
+
+4. Supporting Evidence
+4.1 Configuration/Change Evidence
+- Prior change record (2024-03-14 23:30):
+  - Mapping moved from GPO logon script (USER context) to Intune PowerShell script (SYSTEM context).
+  - Script was not updated to handle SYSTEM startup/context limitations.
+  - Source reference: DESKTOP-FB022 migration note.
+
+4.2 Runtime Evidence Correlation
+- Script attempts mapping at [08:00:01-08:00:03].
+- Workstation service reaches running state at [08:00:05], after first mapping failure.
+- No retry after initial failure despite environment readiness changing shortly after first attempt.
+- GP success event (1500) eliminates GP processing failure as primary causal factor.
+
+4.3 Validation Evidence After Fix
+- Resolution was applied.
+- Service state verified by user login validation and restored shared drive access (as provided in closure update).
+
+5. Incident Timeline (Detailed)
+- 2024-03-14 23:30
+  - Change implemented: drive mapping moved from USER-context GPO logon script to SYSTEM-context Intune script.
+- 08:00:01
+  - Map-FinBridgeDrives.ps1 execution starts.
+- 08:00:02
+  - ScriptRunner confirms SYSTEM context.
+- 08:00:03
+  - UNC access warning and script failure with "Network name cannot be found" (exit code 1).
+- 08:00:04
+  - ScriptRunner logs no retry configured.
+- 08:00:05
+  - Event ID 7036: Workstation service enters running state.
+- 08:00:06
+  - Event ID 1500: Group Policy processed successfully.
+- 08:00:07
+  - Event ID 98: Drive letter S: not mapped.
+- 2026-08-07 (post-remediation)
+  - Suggested resolution applied.
+  - User login and service access verified.
+  - Incident marked resolved.
+
+6. Root Cause Statement
+Primary root cause:
+- The drive mapping mechanism was executed in SYSTEM context following migration to Intune script delivery, but mapped-drive behavior and UNC availability requirements were not engineered for SYSTEM startup execution. This created deterministic mapping failures at or near login/startup, particularly when network/workstation dependencies were not yet fully ready.
+
+Contributing factors:
+- Timing dependency: Workstation service readiness occurred after initial mapping attempt.
+- No retry/self-healing logic: first failure remained terminal for the session.
+- Design mismatch: per-user drive mapping pattern implemented in non-user execution context.
+
+7. 5 Whys Analysis
+Problem statement: Finance users could not access mapped shared drives.
+
+Why 1:
+- Why could users not access the shared drive?
+- Because the drive mapping script failed and did not establish S: mapping.
+- Evidence: ScriptRunner error at [08:00:03], Event ID 98 at [08:00:07].
+
+Why 2:
+- Why did the mapping script fail?
+- Because UNC path access was unavailable from script execution context/time and returned "Network name cannot be found."
+- Evidence: ScriptRunner warning/error at [08:00:03].
+
+Why 3:
+- Why was execution context/time unsuitable?
+- Because script ran as SYSTEM during startup/login sequence, not as the interactive user token expected by prior mapping design.
+- Evidence: ScriptRunner context at [08:00:02]; migration note (2024-03-14 23:30).
+
+Why 4:
+- Why did this context mismatch remain unresolved?
+- Because the migration changed delivery mechanism/context but the script logic and deployment conditions were not updated for SYSTEM constraints and startup dependencies.
+- Evidence: Change note explicitly states script not updated for SYSTEM context.
+
+Why 5:
+- Why did this become a widespread user incident instead of self-recovering?
+- Because no retry or delayed re-attempt mechanism was configured after transient startup failure conditions.
+- Evidence: ScriptRunner "No retry configured" at [08:00:04], with Workstation service only running at [08:00:05].
+
+Root cause from 5 Whys:
+- Incomplete design adaptation during migration to Intune SYSTEM-context execution (context mismatch + missing resiliency controls) caused repeatable mapping failure at scale.
+
+8. Corrective Actions Implemented (Recovery)
+- Applied the suggested resolution to restore mapping behavior in the correct operational context and sequence.
+- Verified recovery via successful user login and restored shared drive access.
+- Incident closure condition met.
+
+9. Preventive Actions (CAPA)
+9.1 Technical Preventive Controls
+- Standardize drive mapping execution in USER context for per-user mapped drives.
+- Add robust readiness checks before mapping:
+  - Verify Workstation service state.
+  - Verify DNS resolution and SMB reachability to target file server.
+- Implement bounded retry/backoff and secondary trigger (user sign-in/network available event).
+- Add explicit structured logging for:
+  - Context (SYSTEM vs USER)
+  - Dependency status
+  - Failure category (DNS, auth, SMB, letter conflict)
+
+9.2 Engineering and Change Controls
+- Add mandatory pre-deployment checklist for script-context migrations:
+  - Execution identity review
+  - Dependency timing review
+  - Rollback plan
+  - Pilot validation on representative OU/device sample
+- Require peer review/sign-off when changing execution context (USER <-> SYSTEM).
+- Include synthetic startup tests in non-production ring before broad deployment.
+
+9.3 Operational Controls
+- Create monitoring alert on repeated mapping script exit code != 0 for Finance fleet.
+- Establish service desk runbook for rapid validation:
+  - Check Workstation service state
+  - Check UNC reachability
+  - Force remap in user context
+- Track monthly KPI: mapping success rate at first logon and after retry.
+
+10. Residual Risk Assessment
+- Residual risk after fix: Low to Medium, dependent on adherence to preventive controls.
+- Main residual risk driver: Future execution-context changes without equivalent validation gate.
+
+11. Lessons Learned
+- Context-sensitive automation (USER vs SYSTEM) must be treated as a functional requirement, not only a deployment parameter.
+- Startup-sequenced network tasks require dependency-aware retries to avoid avoidable user-impacting incidents.
+- Change records should include context assumptions and explicit post-change validation outcomes.
+
+12. Closure Evidence Summary
+- Incident symptom reproduced in provided logs.
+- Causal chain supported by time-ordered evidence (failure before Workstation readiness, no retry, SYSTEM context).
+- Recovery verified by successful user login and restored drive access.
+- Incident status: Resolved and closed.

@@ -1,0 +1,111 @@
+Incident Analysis with Hypothesis Review
+Incident: Floor 3 Win11 Group Policy Failure
+Prepared: 2026-08-07
+Evidence window: 2024-03-15 07:40-07:55 (affected host), with same-window comparator evidence
+
+Instruction applied
+- All hypotheses reviewed.
+- Each hypothesis includes: judgment (supports/contradicts/neutral), specific event ID + timestamp citations, and possible solution.
+- No final winner selected in this document.
+
+=================================================================
+Evidence Summary Used
+=================================================================
+Affected host: DESKTOP-FB031
+- 07:40:02 Service Control Manager Event 7036: NLA entered running state.
+- 07:40:08 Netlogon Event 5719 (Error): no domain controller available; DNS query for FINBRIDGE-DC01.finbridge.local returned no response.
+- 07:40:09 GroupPolicy Event 1058 (Error): cannot access SYSVOL gpt.ini path; error 0x3.
+- 07:40:10 GroupPolicy Event 1030 (Warning): cannot query list of GPOs; error 0x546.
+- 07:40:11 GroupPolicy Event 1058 (Error): repeated SYSVOL access failure.
+- 07:40:12 GroupPolicy Event 1129 (Error): no network connectivity to a domain controller.
+- 07:41:05 DNS Client Event 1014 (Warning): name resolution timeout for FINBRIDGE-DC01.finbridge.local; configured DNS servers did not respond.
+- 07:42:18 DHCP Client Event 50036 (Info): DNS assigned 10.10.3.250 (old/decommissioned DNS).
+- 07:44:01 GroupPolicy Event 1129 (Error): repeated no-DC-connectivity failure.
+
+Comparator host: DESKTOP-FB029 (same OU, unaffected)
+- 07:40:05 DHCP Client Event 50036: DNS assigned 10.10.0.10 (correct DNS).
+- 07:40:11 GroupPolicy Event 1500 (Info): Group Policy processed successfully.
+
+Additional comparison note from DHCP logs
+- Impacted path still referenced decommissioned DNS.
+- Correct target DNS is 10.10.0.10.
+
+=================================================================
+Hypothesis-by-Hypothesis Assessment
+=================================================================
+
+Hypothesis 1
+Hypothesis: Broad domain controller outage affected all clients.
+Judgment: Contradicts
+Determining evidence:
+- 07:40:11 on DESKTOP-FB029, GroupPolicy Event 1500: policy processed successfully.
+- 07:40:05 on DESKTOP-FB029, DHCP Event 50036: correct DNS (10.10.0.10) before successful policy processing.
+Why this judgment:
+- A broad DC outage would likely impact both hosts in the same time window; comparator success argues against domain-wide outage.
+Possible solution if this hypothesis were true:
+- Validate DC service health (AD DS, DNS, SYSVOL/NETLOGON shares).
+- Validate replication and DC reachability from all subnets.
+- Restore failed DC services or fail over to healthy DCs.
+
+Hypothesis 2
+Hypothesis: SYSVOL/GPO file path or policy content corruption caused failure.
+Judgment: Neutral (with partial contradiction)
+Determining evidence:
+- 07:40:09 and 07:40:11 on DESKTOP-FB031, GroupPolicy Event 1058 reports SYSVOL gpt.ini access failure.
+- 07:40:08 Netlogon Event 5719 and 07:41:05 DNS Event 1014 show DNS/DC discovery failure preceding and accompanying SYSVOL errors.
+- 07:40:11 on DESKTOP-FB029, GroupPolicy Event 1500 indicates policy processing can succeed in same OU/time window.
+Why this judgment:
+- 1058 can be consistent with SYSVOL issues, but concurrent DNS/DC failures and comparator success reduce confidence in a domain-wide SYSVOL corruption theory.
+Possible solution if this hypothesis were true:
+- Validate SYSVOL and NETLOGON share availability.
+- Verify DFSR health and GPO folder consistency.
+- Repair missing/corrupt policy files and run gpupdate /force.
+
+Hypothesis 3
+Hypothesis: OU linking/security filtering/WMI scoping error blocked policy application.
+Judgment: Contradicts
+Determining evidence:
+- 07:40:11 on comparator DESKTOP-FB029, GroupPolicy Event 1500 succeeded in same OU=Finance.
+- 07:40:08 Netlogon Event 5719 and 07:41:05 DNS Event 1014 on affected host show connectivity failure pattern, not policy target-selection failure pattern.
+Why this judgment:
+- Same OU with successful application on comparator strongly argues against OU scoping or filtering as primary cause.
+Possible solution if this hypothesis were true:
+- Review GPO link order, inheritance blocks, security groups, and WMI filters.
+- Compare gpresult/RSOP outputs across affected and unaffected machines.
+
+Hypothesis 4
+Hypothesis: Temporary startup race/network-not-ready condition only.
+Judgment: Contradicts
+Determining evidence:
+- 07:42:18 DHCP Event 50036 on DESKTOP-FB031 confirms wrong DNS assignment persisted after startup phase.
+- 07:44:01 GroupPolicy Event 1129 shows continued DC connectivity failure after initial boot sequence.
+- 07:41:05 DNS Event 1014 confirms unresolved DNS state, not just a short startup race.
+Why this judgment:
+- Evidence indicates sustained configuration fault rather than brief early-boot timing delay.
+Possible solution if this hypothesis were true:
+- Enable always-wait-for-network startup policy.
+- Add delayed policy refresh task after network initialization.
+- Tune NIC initialization and startup dependencies.
+
+Hypothesis 5
+Hypothesis: DHCP scope misconfiguration assigned decommissioned DNS, causing DC discovery failure.
+Judgment: Supports
+Determining evidence:
+- 07:42:18 on DESKTOP-FB031, DHCP Event 50036 assigns DNS 10.10.3.250 (old/decommissioned).
+- 07:41:05 on DESKTOP-FB031, DNS Event 1014 shows timeout resolving FINBRIDGE-DC01.finbridge.local.
+- 07:40:08 on DESKTOP-FB031, Netlogon Event 5719 shows no DC available.
+- 07:40:05 + 07:40:11 on DESKTOP-FB029 (Events 50036 + 1500) show correct DNS assignment and successful policy processing.
+Why this judgment:
+- End-to-end causal chain aligns: incorrect DHCP DNS assignment -> DNS resolution timeout -> no DC secure channel -> Group Policy failure.
+Possible solution:
+- Correct DHCP scope option values to 10.10.0.10 and remove retired DNS entries.
+- Review scope options, reservations, and inherited option paths for stale DNS values.
+- Renew DHCP lease and flush DNS cache on affected clients; re-run gpupdate /force.
+- Add post-migration control requiring subnet-level DNS assignment verification before DNS decommission closure.
+
+=================================================================
+Assessment Status
+=================================================================
+- All listed hypotheses were evaluated with explicit support/contradict/neutral judgments.
+- Judgments are tied to specific Event IDs and timestamps.
+- No final winner selected in this document, per instruction.
