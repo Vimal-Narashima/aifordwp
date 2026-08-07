@@ -1,0 +1,34 @@
+What each Event ID records
+
+1. Event ID 1000 (Source: Application Error)
+Records an application crash at process level.
+In your entries it shows Outlook crashed, where Windows detected the fault in KERNELBASE.dll, with exception code 0xc0000005 (access violation), and the same fault offset each time.
+
+2. Event ID 1001 (Source: Windows Error Reporting)
+Records that Windows Error Reporting created a crash report for that failure.
+APPCRASH and a fault bucket ID are used to classify and group similar crashes across devices/builds.
+
+3. Event ID 1026 (Source: .NET Runtime)
+Records a .NET unhandled exception that terminated the process.
+Here it is System.AccessViolationException, which aligns with invalid memory access during Outlook execution.
+
+Reconstructed sequence (plain English)
+
+1. Outlook was launched at 09:13:44.
+2. At 09:14:22, Outlook crashed with an access violation (first Event 1000).
+3. User/system retried Outlook.
+4. At 09:17:45, Outlook crashed again with the exact same signature (second Event 1000: same app version, module, exception code, and offset).
+5. At 09:18:01, Windows Error Reporting logged APPCRASH for this failure pattern (Event 1001).
+6. At 09:18:05, .NET Runtime logged that Outlook terminated due to an unhandled System.AccessViolationException (Event 1026).
+
+Most likely cause (with evidence)
+
+Most likely cause is a repeatable Outlook memory-access crash path, very likely triggered by a specific startup action such as a faulty add-in or corrupted Outlook component/profile state.
+
+Evidence from the events:
+1. Same crash signature repeats: same app version, same module KERNELBASE.dll, same exception 0xc0000005, same fault offset 0x3a4b2.
+2. Crashes happen shortly after launch, suggesting a deterministic startup/load path rather than random instability.
+3. .NET Event 1026 confirms an unhandled AccessViolationException, matching the native crash type.
+4. WER APPCRASH/fault bucket indicates this is a classifiable recurring crash pattern, not a one-off.
+
+Confidence note: these logs prove repeated access-violation crashes, but they do not by themselves identify the exact add-in/file. To confirm root cause, correlate with Outlook add-in load state, Safe Mode behavior, and Office/Outlook update history.
