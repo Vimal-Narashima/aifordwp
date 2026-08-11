@@ -1,0 +1,9 @@
+Resolved.
+
+- Cause: Pre-existing legacy manual MDM enrolment record dated 2023-11-04 conflicted with Autopilot enrolment and blocked completion (0x80180014).
+- Action: Stale Intune device record was retired then deleted.
+- Action: Stale duplicate Entra device object was removed where present.
+- Action: Old Work/School connection was disconnected on device.
+- Action: Device was rebooted and Autopilot enrolment was rerun successfully.
+- Preventive: Mandatory pre-Autopilot eligibility gate now requires legacy MDM conflict check and Retire-then-Delete cleanup of stale Intune/Entra records before redeployment.
+- User confirmed working.
