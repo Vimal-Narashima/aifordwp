@@ -1,0 +1,47 @@
+L2 Knowledge Base - Issue 2 (Missing Shortcuts)
+v 1.0, 07/08/2026, status : Draft
+
+Purpose
+Investigate and restore missing desktop shortcuts after document-management rollout.
+
+Trigger
+Use when users report missing desktop shortcuts after sign-in.
+
+Required access
+- Endpoint administrative access
+- Intune app/profile assignment visibility
+- Event log access
+- Incident and change record access
+
+Procedure (navigation > action > expected)
+1. Service desk > Incident > Open ticket > Set In Progress.
+Expected: ownership and timestamp captured.
+2. Service desk > Work notes > Record affected user, host, missing shortcut names.
+Expected: issue scope documented.
+3. Endpoint > File Explorer > User and Public desktop paths.
+Expected: confirm absent, moved, or hidden shortcuts.
+4. Endpoint > Start search > Search missing app names.
+Expected: confirm app availability independent of shortcut.
+5. Endpoint > Settings > Apps > Installed apps.
+Expected: confirm app install state.
+6. Endpoint > Registry (read-only) > Shell Folders and User Shell Folders desktop entries.
+Expected: confirm desktop path mapping/redirection.
+7. Event Viewer > Application log > Last 7 days installer/deployment events.
+Expected: rollout and error timing evidence captured.
+8. Intune > Apps/Profiles for Floor 6 > Review rollout assignment/detection state.
+Expected: identify rollout-linked behavior.
+9. If rollout-related, pause or scope-limit impacted assignment to Floor 6 only.
+Expected: impact contained.
+10. Restore shortcuts via approved deployment method.
+Expected: shortcuts restored for user.
+
+Verification
+- Shortcuts visible again.
+- Apps open correctly from shortcuts.
+- Second user/device check confirms consistency.
+
+Rollback
+1. Restore pre-change assignment scope.
+2. Re-sync tested endpoints.
+3. Revert restore package if it introduced regression.
+4. Escalate with logs and path evidence if unresolved.

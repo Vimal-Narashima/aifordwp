@@ -1,0 +1,41 @@
+Root Cause Analysis - Issue 3 (Copilot Access Concern)
+Version: v 1.0
+Date: 2026-08-14
+Status: Draft
+
+Incident summary
+A user reported Copilot surfaced a client matter she believed she should not access.
+
+Business impact
+- Potential confidentiality and governance risk.
+- High sensitivity despite initial single-user report.
+
+Evidence reviewed
+- Matter-level exposure report captured.
+- Direct cause not yet confirmed between unauthorized access, stale indexing, or sync mismatch.
+- Related change window exists, causality pending confirmation.
+
+Survived hypothesis
+Source permission drift or sync/index mismatch surfaced content outside intended access.
+
+Cause statement
+Most likely cause is source-system access model mismatch, not harmless AI-only behavior.
+
+Actions taken
+- Preserved evidence.
+- Validated source permissions and audit timeline.
+- Applied containment where unauthorized access was indicated.
+- Planned reindex only after permission correction.
+
+Verification
+- Reporting user cannot retrieve restricted matter after correction.
+- Authorized user access remains correct.
+- Audit logs show no continued unexpected exposure.
+
+Open items
+- Exact mechanism and source path (to confirm).
+- Final affected scope beyond reporting user (to confirm).
+
+Preventive actions
+- Access validation gates for repository-related change windows.
+- Regular entitlement reviews for high-risk legal matter workspaces.

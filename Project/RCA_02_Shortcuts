@@ -1,0 +1,41 @@
+Root Cause Analysis - Issue 2 (Missing Shortcuts)
+Version: v 1.0
+Date: 2026-08-14
+Status: Draft
+
+Incident summary
+Users reported missing desktop shortcuts after Friday rollout of a document-management application.
+
+Business impact
+- Usability disruption and slower app access.
+- Moderate urgency, potentially high for time-sensitive roles.
+
+Evidence reviewed
+- Timing aligned to rollout window.
+- Symptom pattern fits shortcut deployment/redirection changes.
+- No confirmed evidence of file deletion.
+
+Survived hypothesis
+Rollout side effect or shell/desktop path behavior removed, hid, or relocated shortcuts.
+
+Cause statement
+Most likely cause is rollout-linked shortcut/path behavior; exact component remains to confirm.
+
+Actions taken
+- Scoped affected users/devices.
+- Validated app install and desktop path state.
+- Reviewed rollout assignment and application events.
+- Planned scoped containment and shortcut restoration.
+
+Verification
+- Shortcuts reappear.
+- Apps open correctly from restored shortcuts.
+- Secondary user/device check passes.
+
+Open items
+- Exact rollout component causing behavior (to confirm).
+- Final impacted scope (to confirm).
+
+Preventive actions
+- Pre/post rollout shortcut/path validation checks.
+- Rollback-ready assignment controls for shell-impacting deployments.

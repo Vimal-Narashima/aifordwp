@@ -1,0 +1,40 @@
+Root Cause Analysis - Issue 1 (Login)
+Version: v 1.0
+Date: 2026-08-14
+Status: Draft
+
+Incident summary
+Floor 6 Legal experienced slow or failed sign-in after recent Win11 and Intune migration activity.
+
+Business impact
+- Start-of-day disruption for affected users.
+- High urgency due to inability to begin work.
+
+Evidence reviewed
+- Same-floor multi-user impact pattern.
+- Timing aligned to change window.
+- Recovery observed after scoped containment and re-sync actions.
+
+Survived hypothesis
+Shared sign-in policy/profile-state drift or misapplied configuration in the migrated baseline.
+
+Cause statement
+Most likely root cause is shared configuration drift in the sign-in/profile path for the migrated cohort.
+
+Actions taken
+- Scoped incident and validated pattern.
+- Reviewed recent sign-in/profile changes.
+- Paused/rolled back suspected policy for impacted scope.
+- Re-synced devices and re-tested users.
+
+Verification
+- Affected user login succeeded.
+- No immediate repeat reports in verification window.
+
+Open items
+- Exact misconfigured value and change artifact ID to confirm.
+
+Preventive actions
+- Staged rollout gates.
+- Explicit sign-in health checks before expansion.
+- Rollback triggers and post-change monitoring.

@@ -1,0 +1,51 @@
+L2 Knowledge Base - Issue 1 (Login)
+v 1.0, 07/08/2026, status : Draft
+
+Purpose
+Restore floor-wide slow/failed sign-in service after Win11 and Intune change activity.
+
+Trigger
+Use when multiple users on Floor 6 report slow or failed sign-in.
+
+Required access
+- Intune admin permissions
+- Entra sign-in log access
+- Local admin on at least one affected endpoint
+- Incident and change record access
+
+Procedure (navigation > action > expected)
+1. Service desk > Incident > Open ticket > Set In Progress.
+Expected: ownership and timestamp captured.
+2. Service desk > Work notes > Record affected user and host.
+Expected: fixed test pair established.
+3. Endpoint > PowerShell (admin) > Run dsregcmd /status.
+Expected: join and token state captured.
+4. Endpoint > Event Viewer > Security > Export last 2h IDs 4624/4625/4771/4776.
+Expected: authentication evidence exported.
+5. Endpoint > Event Viewer > User Profiles Service/Operational > Export last 2h.
+Expected: profile evidence exported.
+6. Intune > Devices > Affected device > Sync.
+Expected: fresh policy check requested.
+7. Intune > Configuration profiles > Suspected sign-in/profile policy > Assignments.
+Expected: pre-change assignment snapshot captured.
+8. Intune > Same policy > Pause/unassign for Floor 6 scope only.
+Expected: suspected policy stops applying to Floor 6.
+9. Intune > Affected device > Sync again.
+Expected: updated effective policy requested.
+10. Endpoint > Sign-in with affected user.
+Expected: desktop reached within normal timing.
+11. Repeat with second user/device.
+Expected: confirms floor-level recovery.
+
+Verification
+- Affected user sign-in succeeds.
+- Second user sign-in succeeds.
+- No repeating auth/profile pattern during monitoring window.
+- Intune sync status shows success on tested devices.
+
+Rollback
+1. Restore exact pre-change policy assignment scope.
+2. Sync tested devices.
+3. Reboot tested devices once.
+4. Re-test sign-in.
+5. Escalate with logs and assignment diff if still degraded.

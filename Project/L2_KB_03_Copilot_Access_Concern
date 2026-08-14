@@ -1,0 +1,46 @@
+L2 Knowledge Base - Issue 3 (Copilot Access Concern)
+v 1.0, 07/08/2026, status : Draft
+
+Purpose
+Handle unexpected Copilot matter exposure as a potential access-control concern until disproven.
+
+Trigger
+Use when a user reports seeing matter content they believe they should not access.
+
+Required access
+- Incident and security workflow access
+- Source-system permission administration access
+- Audit log access for source repository and related services
+
+Procedure (navigation > action > expected)
+1. Service desk > Incident > Open ticket > Set security severity flag.
+Expected: concern is tracked as potential exposure.
+2. Service desk > Work notes > Record user, time, matter ID/name, prompt text, surface.
+Expected: minimum evidence baseline captured.
+3. Ticket attachments > Store screenshot/context artifacts.
+Expected: evidence preserved.
+4. Source admin portal > Matter permissions > Check effective permissions for user.
+Expected: intended vs actual access validated.
+5. Source audit logs > Access/share/permission changes around event time.
+Expected: unexpected grant/change evidence identified or excluded.
+6. Copilot retrieval/audit path (if available) > Validate source alignment.
+Expected: retrieval path correlation established.
+7. If unauthorized access confirmed, revoke unintended access immediately.
+Expected: containment applied.
+8. If stale indexing/sync confirmed, correct permissions then reindex/republish.
+Expected: surfaced content aligns to corrected permissions.
+9. Run negative test (reporting user) and positive control test (authorized user).
+Expected: unauthorized access blocked, authorized access preserved.
+
+Verification
+- Reporting user cannot retrieve unauthorized matter content.
+- Authorized user behavior remains correct.
+- Audit trail reflects corrective actions and no new unexpected exposure.
+
+Rollback
+1. Restore last known-good permission model from approved backup/change record if regression occurs.
+2. Re-run reporting and control tests.
+3. Escalate to security governance if impact expands.
+
+Critical note
+Do not close as harmless AI behavior without source permission and audit validation.
