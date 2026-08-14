@@ -1,0 +1,15 @@
+Ranked cause 2
+Likely cause
+The new document management app rollout, or a related desktop/shell policy change triggered by that rollout, is affecting desktop shortcuts on Floor 6.
+
+Why it fits the evidence
+- The shortcut problem started after the new document management app was rolled out on Friday afternoon
+- At least one user reported that desktop shortcuts vanished, which is consistent with a deployment, profile, or shell behavior change
+- The issue may be tied to desktop folder redirection, OneDrive sync, or a deployment script removing or relocating shortcuts (to confirm)
+- This does not yet explain the logon delays by itself, so it may be a separate but related change
+
+Fastest check to confirm or eliminate it
+- Verify whether the app is installed successfully on an affected machine and check whether the user's Desktop folder is redirected, policy-managed, or empty on disk versus only hidden from view
+
+Specific remediation action if confirmed
+- Stop or roll back the document management app deployment to the floor, then restore or recreate the missing shortcuts and correct any desktop redirection or shell policy that removed them

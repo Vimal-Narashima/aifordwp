@@ -1,0 +1,15 @@
+Ranked cause 3
+Likely cause
+Copilot is surfacing content through a permissions, indexing, or access-sync problem in the underlying source system.
+
+Why it fits the evidence
+- A paralegal reported seeing a client matter she believes she never had access to
+- That is a high-risk confidentiality symptom and can indicate an access-control problem, a stale index, or a permissions-sync issue
+- The document management app rollout may have changed access paths or indexing behavior, but that is not yet confirmed
+- There is no proof yet that this is an actual breach rather than a misunderstanding or stale data exposure (to confirm)
+
+Fastest check to confirm or eliminate it
+- Check the user's effective permissions on the source matter first, then verify whether the same content appears for other users or only through Copilot
+
+Specific remediation action if confirmed
+- Remove any unintended access immediately, review the audit trail, correct the underlying permissions or sync error, and reindex or republish the content so Copilot only surfaces data the user is actually allowed to see

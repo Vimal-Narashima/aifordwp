@@ -1,0 +1,56 @@
+{\rtf1\ansi\deff0{\fonttbl{\f0 Calibri;}}\viewkind4\uc1\pard\f0\fs22 # Azure Virtual Desktop Setup Record\\par 
+\\par 
+Date executed: 2026-08-13\\par 
+Subscription: 9a89dd7c-2c36-41b4-9f7a-b7f73e94be56\\par 
+Resource Group: dwpai-lab-rg\\par 
+Region: East US\\par 
+Tenant: zippyops.in\\par 
+Requested user: p60@zippyops.in\\par 
+\\par 
+## Permission Pre-Check\\par 
+- Signed-in identity: traininguser80@zippyops.in\\par 
+- Effective role on subscription: Owner\\par 
+- Effective role on resource group: Owner\\par 
+- Role assignment capability: Confirmed\\par 
+\\par 
+## Deployed AVD Components\\par 
+- Host pool: POOL-FIN-01\\par 
+- Host pool type: Pooled\\par 
+- Load balancing: BreadthFirst\\par 
+- Max sessions per host: 5\\par 
+- Desktop app group: POOL-FIN-01-DAG\\par 
+- Workspace: FinBridge-Workspace\\par 
+- App group registration to workspace: Completed\\par 
+\\par 
+## Session Host VM\\par 
+- VM name: avd-fin-01\\par 
+- VM size: Standard_B2ms\\par 
+- Image: MicrosoftWindowsDesktop:windows-11:win11-24h2-avd:latest\\par 
+- Security type: TrustedLaunch\\par 
+- Secure Boot: Enabled\\par 
+- vTPM: Enabled\\par 
+- Join state target: Microsoft Entra ID joined only\\par 
+\\par 
+## Access Assignments Applied\\par 
+- p60@zippyops.in -> Virtual Machine User Login (scope: avd-fin-01)\\par 
+- p60@zippyops.in -> Desktop Virtualization User (scope: POOL-FIN-01-DAG)\\par 
+\\par 
+## Diagnostics and Remediation\\par 
+- VM provisioning failures diagnosed via ARM deployment errors.\\par 
+- Cause identified: incompatible patch settings with selected image.\\par 
+- Fix applied: patch mode set to Manual with automatic updates disabled.\\par 
+- Session host Unavailable state diagnosed using VM-side logs and dsregcmd.\\par 
+- Join issue corrected; post-fix validation showed:\\par 
+  - AzureAdJoined: YES\\par 
+  - DomainJoined: NO\\par 
+\\par 
+## Final Status Verification\\par 
+- Session host resource: POOL-FIN-01/avd-fin-01\\par 
+- Session host status: Available\\par 
+- Allow new sessions: True\\par 
+- Current sessions: 0\\par 
+\\par 
+## Notes\\par 
+- The Desktop Virtualization CLI extension in this environment did not expose direct session host subcommands.\\par 
+- Session host status was verified using az rest against Microsoft.DesktopVirtualization API.\\par 
+ }

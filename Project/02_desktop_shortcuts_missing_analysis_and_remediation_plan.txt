@@ -1,0 +1,36 @@
+Finalized hypothesis
+The most likely cause is the Friday document management app rollout, or a related desktop or shell policy change, affecting shortcut placement on Floor 6. The missing shortcuts may be a deployment side effect, a redirected desktop location, or a profile/shell change rather than deleted files.
+
+Why this is the best-fit hypothesis
+- The shortcut issue began after the new document management app was rolled out on Friday afternoon.
+- At least one user reported that desktop shortcuts vanished.
+- The symptom is consistent with a deployment, profile, or desktop redirection change.
+- The evidence does not yet show that this is a floor-wide issue, so that remains to confirm.
+
+Exact remediation steps
+1. Identify which shortcuts are missing and confirm whether the issue is limited to one machine or multiple users.
+2. Check whether the app is installed successfully on an affected machine.
+3. Verify whether the user's Desktop folder is redirected, managed by policy, or relocated to another path.
+4. Check whether the shortcuts are missing from the desktop only or also from Start menu, taskbar, or search.
+5. If the deployment or policy change removed or relocated the shortcuts, stop or roll back the rollout effect and restore the expected shortcut placement.
+6. Recreate any missing shortcuts if the apps are still installed and reachable.
+
+Correct order of operations
+1. Confirm the scope and what exactly is missing.
+2. Verify app installation and desktop path handling.
+3. Check whether the rollout or policy change is responsible.
+4. Roll back or correct the deployment impact if confirmed.
+5. Restore or recreate shortcuts.
+6. Re-test on the affected machine and a control machine.
+
+Verification check after remediation
+- Confirm the shortcuts are visible again on the affected user's desktop.
+- Confirm the app still launches correctly from the restored shortcuts.
+- Confirm the issue does not appear on a second Floor 6 device.
+
+Preventive action to stop recurrence
+- Add a pre-deployment check for desktop redirection and shortcut behavior before rolling document management or shell-related changes to the floor.
+- Keep a rollback-ready deployment plan for applications that may affect desktop layout or user profile paths.
+
+Operational note
+Do not assume the shortcuts were manually deleted until the desktop path and deployment behavior are checked. The timing after the app rollout is the strongest clue.

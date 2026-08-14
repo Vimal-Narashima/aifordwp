@@ -1,0 +1,42 @@
+Finalized hypothesis
+Copilot is surfacing a client matter through a permissions, indexing, or access-sync problem in the underlying source system. The working assumption is not that Copilot itself is "wrong" in a harmless sense, but that the underlying access model may be exposing content the user should not see or that the content is being surfaced from a stale or mismatched permission state.
+
+Why this is the best-fit hypothesis
+- A paralegal reported that Copilot showed a client matter she believes she has never had access to.
+- That symptom maps directly to a potential confidentiality or authorization problem.
+- The report is specific to a matter-level exposure, not a generic Copilot failure.
+- There is no current evidence that this is simply a user misunderstanding, and there is no error code to interpret.
+- The Friday document management app rollout may have changed the data path, indexing behavior, or permission sync process, so it remains a plausible contributing factor (to confirm).
+
+Exact remediation steps
+1. Preserve evidence first. Capture the exact matter name or identifier, the user identity, the Copilot prompt or search context, the time of the event, and any screenshots or transcript evidence before making changes.
+2. Verify the source permission state. Check the user's effective permissions on the underlying matter in the source system and confirm whether the user should or should not have access.
+3. Review audit data. Check logs for permission changes, sharing changes, indexing events, sync events, or rollout-related changes around the time the issue was reported.
+4. Decide containment based on the result. If the user does not have access, treat this as a potential unauthorized exposure and remove any unintended access immediately.
+5. Correct the root cause at the source. Fix the permission assignment, share configuration, or sync issue in the underlying system rather than closing the Copilot symptom alone.
+6. Reindex or republish only after permissions are corrected. If the source permissions are wrong or stale, refresh Copilot's indexed content so it reflects the corrected access model.
+7. Re-test with a controlled check. Confirm the same matter no longer appears for the affected user while still appearing only for properly authorized users.
+
+Correct order of operations
+1. Preserve evidence.
+2. Verify source permissions.
+3. Check audit and sync history.
+4. Contain or revoke unintended access if confirmed.
+5. Correct the underlying permission or access-sync defect.
+6. Reindex or republish the affected content.
+7. Re-test with affected and control users.
+
+Verification check after remediation
+- Confirm the affected paralegal no longer has access to the matter in the source system if access was not intended.
+- Confirm Copilot no longer surfaces that matter for the affected user.
+- Confirm authorized users still see the matter normally.
+- Confirm audit records show the corrective action and no further unexpected exposure.
+
+Preventive action to stop recurrence
+- Add a pre- and post-change validation step for document management rollouts and permission changes that checks whether Copilot or search surfaces only content the user is actually entitled to see.
+- Require rollback-ready change control for any rollout that affects indexing, content access, or shell/application integration.
+- Add periodic access-review sampling for high-risk legal matters so stale permissions are detected before they are exposed through Copilot.
+- Track permission-sync and indexing health after rollout windows so stale data states are identified early.
+
+Operational note
+Do not dismiss this as "AI weirdness." Until the source permissions and audit trail are checked, this remains a potential access-control or information-exposure issue and should be handled as such.

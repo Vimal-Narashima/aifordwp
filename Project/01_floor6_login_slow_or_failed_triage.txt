@@ -1,0 +1,29 @@
+Summary (one line)
+At least a dozen Floor 6 Legal users are reporting very slow or failed Windows 11 sign-ins this Monday morning after a recent Win11 and Intune migration.
+
+Impact (who/how many/ business urgency)
+- Affected users: Floor 6 Legal, 45 people total; at least a dozen currently affected (to confirm exact count)
+- Scope: Logon failure or very slow logon, affecting core access to desktop and apps
+- Business urgency: High, because users cannot start work and the floor is in active service disruption
+
+Known facts
+- Floor 6 belongs to Legal
+- The floor has recently migrated to Windows 11 and enrolled in Intune
+- The issue was reported Monday morning
+- At least a dozen people cannot log in or are taking a long time to log in
+- No error message, device model, or exact failure point has been provided (to confirm)
+
+Missing information to gather
+- Which specific users are affected and whether it is all Floor 6 users or only some
+- Whether the issue affects first sign-in, password entry, profile load, or desktop load
+- Any error text, code, or screen state
+- Whether the problem occurs on one device or follows the user to another device
+- Whether recent policy, app, or Windows updates were applied
+- Whether network or VPN status is involved
+- Whether reboot has been tried and what changed after reboot
+
+Likely category
+- Identity / Windows logon / Intune-managed endpoint issue (to confirm)
+
+Suggest first diagnostic step
+- Test one affected user on one affected device and capture exactly where logon stalls or fails, because that quickly separates an account or authentication problem from a device, profile, or Intune policy issue.

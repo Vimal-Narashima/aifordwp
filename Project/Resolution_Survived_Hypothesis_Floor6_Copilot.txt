@@ -1,0 +1,77 @@
+Resolution Document
+Incident theme: Floor 6 Legal Copilot access concern
+Date: 2026-08-14
+
+Event details (current known state)
+- Report time: Monday morning via IT Ops lead (09:14 message).
+- A paralegal reported Copilot surfaced a client matter she believes she has never had access to.
+- Floor context: Legal team, recently migrated to Windows 11 and enrolled in Intune.
+- Related change window: New document management app rollout on Friday afternoon.
+- No confirmed error code has been provided for this Copilot report.
+- Scope of exposure beyond the reporting user is still to confirm.
+
+Elimination summary
+- Eliminated as final explanation: "AI weirdness" or harmless hallucination.
+  Reason: The symptom involves potential access to a specific client matter, which must be treated as an access-control or data-governance concern until proven otherwise.
+- Eliminated as sufficient closure condition: "Issue seen only in Copilot, so no security concern."
+  Reason: Copilot output can still reflect underlying permission, sharing, or indexing problems.
+- Remaining and surviving hypothesis:
+  Copilot surfaced matter content due to an underlying source permission problem or permission-sync/indexing mismatch (to confirm exact mechanism).
+
+Survived hypothesis (named)
+Underlying source-system access-control drift (or stale permission/index synchronization) allowed Copilot to surface matter content to a user who may not have intended access.
+
+Detailed resolution steps
+1. Preserve evidence before any correction.
+   - Capture the exact matter identifier/title, user account, timestamp, and prompt/context used.
+   - Preserve screenshots and relevant session details.
+   - Record what app or surface Copilot used (to confirm if not already known).
+
+2. Open/track as potential information-exposure case.
+   - Classify as a security-sensitive access incident pending validation.
+   - Assign owners for endpoint support, identity/access admin, and source-system admin.
+
+3. Validate effective permissions on the source matter.
+   - Check direct permissions, group-derived permissions, inherited permissions, and sharing links.
+   - Confirm whether the reporting user should have access by policy.
+
+4. Review audit trail around the event window.
+   - Check access events, share changes, permission edits, and sync/indexing jobs.
+   - Correlate with Friday rollout timing to identify unintended permission propagation.
+
+5. Contain immediately if unauthorized access is confirmed.
+   - Remove unintended access at the source object and parent container where applicable.
+   - Disable or revoke problematic shares/links.
+   - Escalate any confirmed exposure through the security process.
+
+6. Correct root cause, not only symptom.
+   - Fix ACL model, group membership, inheritance boundaries, or sync configuration that caused drift.
+   - If needed, correct rollout configuration tied to document management integration.
+
+7. Refresh content visibility state after permission correction.
+   - Reindex/republish only after access controls are corrected.
+   - Ensure cached/stale visibility is reconciled with current permissions.
+
+8. Verify remediation with controlled tests.
+   - Negative test: reporting user should not retrieve the restricted matter via Copilot.
+   - Positive control: authorized user can still retrieve the matter as expected.
+   - Broader sample: verify at least one additional non-authorized user cannot retrieve it.
+
+9. Communicate outcome and close with evidence.
+   - Document root cause, impacted scope, containment steps, and verification results.
+   - Provide a partner-safe summary and internal technical closure note.
+
+Verification checks required for closure
+- Source system shows intended access only for the matter.
+- Copilot no longer surfaces the matter to unauthorized users.
+- Audit logs show no continued unexpected exposure after remediation.
+- Control users still have correct access based on role.
+
+Preventive actions
+- Add pre/post-change access validation for any rollout that affects document repositories, search, or Copilot surfaces.
+- Add periodic entitlement review for high-risk legal matter workspaces.
+- Add change guardrails requiring rollback plans when indexing or permission sync behavior is modified.
+- Add a mandatory incident pattern: never close similar reports as "AI weirdness" without source-permission verification.
+
+Status line
+Survived hypothesis remains the primary root-cause candidate and resolution is in progress until permission validation and post-fix verification are complete.

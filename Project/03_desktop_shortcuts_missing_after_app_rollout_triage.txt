@@ -1,0 +1,26 @@
+Summary (one line)
+Some Floor 6 users report that desktop shortcuts disappeared after the new document management app was rolled out on Friday afternoon.
+
+Impact (who/how many/ business urgency)
+- Affected users: At least one user report; floor-wide scope unknown (to confirm)
+- Scope: Desktop usability issue affecting access to commonly used apps or files
+- Business urgency: Moderate, unless the missing shortcuts block critical work
+
+Known facts
+- The new document management app was rolled out to that floor on Friday afternoon
+- At least one user says desktop shortcuts vanished
+- No information yet on whether the shortcuts are deleted, hidden, moved, or tied to a profile or Desktop folder change (to confirm)
+- No confirmation yet that this affects all Floor 6 users
+
+Missing information to gather
+- Which shortcuts are missing and whether the issue is on one machine or multiple machines
+- Whether the shortcuts disappeared from the desktop only or also from Start menu or taskbar
+- Whether the user can find the app via search or in the installed programs list
+- Whether the issue started immediately after the rollout or after a reboot or sign-in
+- Whether the desktop is redirected to OneDrive or another managed location
+
+Likely category
+- Endpoint configuration / application deployment / shell shortcut issue (to confirm)
+
+Suggest first diagnostic step
+- Check whether the app is still installed and whether the user's Desktop folder is being redirected or policy-managed, because that quickly shows whether the shortcuts were removed by deployment, hidden by profile redirection, or simply moved elsewhere.

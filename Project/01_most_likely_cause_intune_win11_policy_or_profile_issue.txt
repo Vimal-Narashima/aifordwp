@@ -1,0 +1,15 @@
+Ranked cause 1
+Likely cause
+A recent Windows 11 / Intune policy, profile, or sign-in configuration issue is affecting Floor 6 Legal devices after the migration.
+
+Why it fits the evidence
+- Multiple users on the same floor are affected at the same time
+- The main symptom is logon being very slow or failing, which points to a shared authentication, profile, or policy path
+- The floor was recently migrated to Windows 11 and enrolled in Intune, so a new shared configuration change is plausible
+- The timing is Monday morning, which fits a policy sync, update, or sign-in path problem after the weekend (to confirm)
+
+Fastest check to confirm or eliminate it
+- Test one affected user on one affected device and note exactly where the sign-in stalls, then compare with one unaffected user or device on the same floor; check whether the issue follows the user, the device, or both
+
+Specific remediation action if confirmed
+- Roll back or pause the most recent Intune or sign-in policy change affecting Floor 6, then re-sync the impacted devices and repair any broken profile or login configuration before broadening the rollout

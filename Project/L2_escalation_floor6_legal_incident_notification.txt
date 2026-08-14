@@ -1,0 +1,37 @@
+L2 escalation summary
+This is a high-priority Copilot access concern, not a routine support annoyance. A paralegal reported that Copilot surfaced a client matter she says she has never had access to, which means we must treat this as a potential information exposure, permissions failure, or stale indexing/access-sync problem until the source system has been verified.
+
+What is known so far
+- The report came from a paralegal on Floor 6.
+- Copilot reportedly returned a client matter the user believes she should not be able to see.
+- There is no confirmation yet whether the issue is a true unauthorized access event, a permissions propagation delay, a stale index, or a misunderstanding of what Copilot displayed.
+- The Friday document management app rollout may be relevant, but that is not confirmed.
+- No error code or technical failure message has been provided with the Copilot report.
+
+What this means operationally
+- This should be handled as a potential security and data-governance issue until proven otherwise.
+- The immediate question is whether the user has effective access to the source matter in the underlying system.
+- If the user does not have access, the concern escalates to a possible access-control or data-exposure defect.
+- If the user does have access, then the issue may sit with Copilot indexing, content surfacing, or a misunderstanding of the permissions model.
+
+What remains open
+- The exact matter identifier or record name.
+- Which source system Copilot pulled from.
+- Whether the matter is actually accessible to the user in the source system.
+- Whether audit logs show a recent permission change, share change, or sync event.
+- Whether any other users can reproduce the same result.
+- Whether the document management rollout introduced a permission or indexing change that affected exposure.
+
+What is being done
+- Verify the user's effective permissions on the source matter.
+- Check audit evidence for any access, sharing, or indexing changes.
+- Confirm whether the same content appears for other users or only through Copilot.
+- Preserve evidence before any cleanup, rollback, or reindexing action.
+
+Two-sentence escalation for L2
+Copilot surfaced a client matter to a paralegal who believes she has never had access to it, so this must be treated as a potential unauthorized exposure or permissions-sync defect until the source system is checked. Please verify effective permissions, preserve audit evidence, and confirm whether access revocation, containment, or reindexing is required before closure.
+
+What not to do
+- Do not close this as "AI weirdness" or a harmless Copilot hallucination.
+- Do not assume the issue is resolved because the content appeared only in Copilot.
+- Do not delete evidence or reindex the content before the permission and audit questions are answered.

@@ -1,0 +1,36 @@
+Finalized hypothesis
+The most likely cause is a Windows 11 / Intune sign-in, policy, or profile problem affecting Floor 6 Legal devices after the recent migration. The pattern fits a shared configuration or authentication issue more than a single-user hardware fault because multiple users are impacted at the same time.
+
+Why this is the best-fit hypothesis
+- At least a dozen Floor 6 users reported very slow or failed sign-in.
+- The floor recently moved to Windows 11 and was enrolled in Intune.
+- A shared logon path problem would explain why several users were affected together.
+- There is not yet enough evidence to separate a user-account problem from a device, policy, or profile issue, so that remains to confirm.
+
+Exact remediation steps
+1. Identify one affected user and one affected device and capture exactly where the logon flow stalls.
+2. Check whether the issue follows the user to another device or stays with the original device.
+3. Review Intune policy deployment, recent changes, and sign-in/profile events for Floor 6 devices.
+4. If a recent policy or profile change is implicated, pause or roll it back before making wider changes.
+5. Re-sync the affected device and repair any broken local profile, sign-in component, or policy application state.
+6. Re-test sign-in with the same user and device pair after remediation.
+
+Correct order of operations
+1. Capture the failure point.
+2. Determine whether the issue follows the user or device.
+3. Check recent Intune, policy, and profile changes.
+4. Contain or roll back the suspected change if confirmed.
+5. Repair the affected device or profile state.
+6. Re-sync and re-test.
+
+Verification check after remediation
+- Confirm the affected user can sign in normally on the affected device.
+- Confirm at least one other Floor 6 user can sign in normally as a control check.
+- Confirm the logon delay no longer occurs after reboot or re-sync.
+
+Preventive action to stop recurrence
+- Add a staged rollout and post-change validation step for any Intune or Win11 sign-in policy that affects the floor.
+- Monitor sign-in performance and profile load behavior after migration changes so failures are caught before they affect a whole floor.
+
+Operational note
+Do not treat this as an isolated slow PC report until the sign-in path and policy state have been checked. The current evidence points to a shared endpoint or identity configuration issue affecting the migrated floor.

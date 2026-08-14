@@ -1,0 +1,101 @@
+Preventive Note
+Incident: Floor 6 Legal Slow/Failed Logon
+Date: 2026-08-14
+
+Issue
+- Users on Floor 6 Legal experienced slow or failed Windows sign-in at the start of the business day.
+- The incident occurred after a recent Windows 11 and Intune migration/change window.
+- Service impact was high because affected users could not begin work on time.
+- Incident has been resolved and login was verified as successful after remediation.
+
+Fix
+- Confirmed the issue was floor-wide rather than isolated to one user or one device.
+- Reviewed recent sign-in/profile-related configuration changes for the affected cohort.
+- Paused or rolled back the suspected policy/configuration path for the impacted scope.
+- Re-synced affected devices to apply corrected effective configuration.
+- Re-tested sign-in with affected and control users.
+- Verified successful login and no immediate repeat reports.
+
+Cause
+- Most probable cause from RCA: a shared sign-in policy/profile-state drift or misapplied configuration in the Win11 + Intune migrated baseline.
+- Why this is credible:
+  - Multiple users on one floor were affected at the same time.
+  - Timing aligned with post-change period.
+  - Service recovered after change containment and policy re-sync actions.
+- Remaining precision gap: exact misconfigured setting/value and change artifact are still to confirm from policy diff and change logs.
+
+Preventive note (detailed)
+
+1) Change gating and rollout safety
+- Introduce mandatory staged rollout for sign-in/profile/identity-affecting policy changes.
+- Start with a pilot group, then a limited business cohort, then full scope only after successful checks.
+- Block production-wide deployment if pilot sign-in checks fail or are incomplete.
+- Require an explicit go/no-go decision record before each expansion stage.
+
+2) Pre-deployment validation checklist (must pass before rollout)
+- Confirm policy intent, target scope, and exclusion scope are peer-reviewed.
+- Confirm assignment does not unintentionally include high-impact floors.
+- Validate baseline compatibility against migrated Windows 11 cohort.
+- Validate rollback path and rollback owner are defined before deployment.
+- Validate service desk readiness: known symptoms, first triage actions, and escalation path.
+
+3) Post-deployment early-warning controls
+- Enforce a monitoring window immediately after each rollout phase.
+- Watch for sign-in failures, sign-in delay complaints, and profile-load error patterns.
+- Require checkpoint sign-offs at fixed intervals (for example, 30/60/120 minutes after release) before widening scope.
+- If thresholds are exceeded, auto-trigger containment: pause rollout and revert assignment scope.
+
+4) Rollback readiness standard
+- Keep a documented pre-change snapshot of policy assignment and critical setting values.
+- Store one-click rollback steps in the change record, including exact target groups.
+- Define an on-call escalation chain for failed rollback.
+- Test rollback procedure quarterly in a non-production or controlled test scope.
+
+5) Evidence and incident response standardization
+- Use a standard incident evidence pack for login incidents:
+  - affected user/device pair,
+  - sign-in timing before/after,
+  - security/profile log extracts,
+  - policy assignment snapshot,
+  - sync timestamps,
+  - verification outcome.
+- Require this pack before closure to improve repeatability and audit quality.
+
+6) Ownership and accountability model
+- Service desk owner:
+  - maintain symptom playbook,
+  - ensure ticket evidence quality,
+  - execute initial scope checks.
+- Endpoint/Intune owner:
+  - approve and execute scoped containment,
+  - validate assignment correctness,
+  - complete policy-diff analysis.
+- Change manager:
+  - enforce rollout gates,
+  - verify rollback readiness,
+  - ensure post-change reviews are completed.
+
+7) Verification rules before declaring stable
+- Validate at least one previously affected user can sign in successfully.
+- Validate at least one additional user on another affected device can sign in successfully.
+- Validate no repeated sign-in/profile failure pattern during defined observation window.
+- Validate policy sync success on sampled affected devices.
+- Keep incident in monitoring state until all checks pass.
+
+8) Knowledge and communication improvements
+- Keep L1, L2, and Runbook documents synchronized after each incident learning.
+- Publish plain-language user guidance quickly during active disruption.
+- Provide leadership updates that separate resolved items from open risks.
+- Train first responders on scope containment to avoid broad rollback errors.
+
+9) Recurrence prevention checkpoints (operational cadence)
+- Weekly: review all recent identity/sign-in policy changes and near misses.
+- Monthly: audit target group assignments and drift in sign-in/profile baselines.
+- Quarterly: tabletop incident drill for floor-wide sign-in outage and rollback.
+
+10) Closure condition for preventive actions
+- Preventive actions are complete only when:
+  - staged rollout gates are active,
+  - threshold-based rollback triggers are defined and tested,
+  - standard evidence pack is in use,
+  - ownership and review cadence are formally assigned.

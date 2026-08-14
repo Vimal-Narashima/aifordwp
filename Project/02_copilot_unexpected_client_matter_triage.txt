@@ -1,0 +1,27 @@
+Summary (one line)
+A paralegal reported Copilot surfaced a client matter she believes she should never have been able to access, which may indicate a permissions or data exposure issue.
+
+Impact (who/how many/ business urgency)
+- Affected users: One user report so far; scope unknown (to confirm)
+- Scope: Possible exposure of restricted client matter data through Copilot
+- Business urgency: Very high, because this could be a confidentiality or access-control issue
+
+Known facts
+- The report came from a paralegal on Floor 6
+- Copilot reportedly returned a client matter the user says she never had access to
+- No evidence yet of whether this was a true permission breach, cached or indexed content, or a mistaken user assumption (to confirm)
+- The app rollout on Friday may be related, but that is not confirmed
+
+Missing information to gather
+- Exact matter name or identifier and where Copilot surfaced it
+- Whether the user truly lacks access in the source system
+- Which data source Copilot used
+- Whether any other users saw the same content
+- Whether permissions were changed during the Friday app rollout or by a recent migration
+- Whether there is an audit trail for access or sharing changes
+
+Likely category
+- Security / Information Access / M365 Copilot permissions issue (to confirm)
+
+Suggest first diagnostic step
+- Verify the user's effective permissions on the source matter first, because that is the fastest way to confirm whether this is a real access-control breach or a Copilot, indexing, or permission-sync problem.

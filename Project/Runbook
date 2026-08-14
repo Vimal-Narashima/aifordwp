@@ -1,0 +1,145 @@
+Runbook: Floor 6 Legal Slow/Failed Windows Logon (Win11 + Intune)
+Version: 1.0
+Date: 2026-08-14
+Use case: Engineer takes over cold during active user-impacting login incident.
+
+1. Prerequisites
+
+Access rights required before starting
+- Intune admin portal access with permission to view and edit device configuration/profile assignments. [ELEVATED PERMISSIONS REQUIRED]
+- Entra ID sign-in log reader access (or equivalent identity log access). [ELEVATED PERMISSIONS REQUIRED]
+- Local admin rights on at least one affected endpoint for event log review and profile checks. [ELEVATED PERMISSIONS REQUIRED]
+- Service desk ticket system access to record timeline and actions.
+- Change record access for the recent Win11/Intune rollout affecting Floor 6.
+
+Tools required
+- Intune admin center.
+- Entra ID (or equivalent identity log portal).
+- Remote support tool approved by DWP.
+- PowerShell 5.1 on target endpoint.
+- Event Viewer on target endpoint.
+
+Systems and data required
+- One confirmed affected host name.
+- One confirmed affected user ID.
+- One control user on Floor 6 who is currently not impacted (if available).
+- Incident ticket ID.
+- Latest change ticket ID tied to Win11/Intune baseline for Floor 6.
+
+2. Procedure
+
+Step 1
+Action: Open the active incident ticket and set status to "In Progress - Login Outage Triage".
+Expected result: Incident ownership is visible and timestamped.
+
+Step 2
+Action: Record one affected user ID and one affected host name in the incident ticket.
+Expected result: The ticket has a fixed test pair for repeatable validation.
+
+Step 3
+Action: Connect to the affected host using the approved remote support tool.
+Expected result: You have an active support session on the affected endpoint.
+
+Step 4
+Action: Run `dsregcmd /status` on the affected host and capture output in the ticket. [ELEVATED PERMISSIONS REQUIRED if restricted]
+Expected result: Device join and token state are documented for the impacted endpoint.
+
+Step 5
+Action: Open Event Viewer and export the last 2 hours of Security log events with IDs 4624, 4625, 4771, and 4776. [ELEVATED PERMISSIONS REQUIRED]
+Expected result: Authentication success/failure evidence is available for correlation.
+
+Step 6
+Action: Open Event Viewer and export the last 2 hours of `Microsoft-Windows-User Profiles Service/Operational`. [ELEVATED PERMISSIONS REQUIRED]
+Expected result: Profile load and profile error events are captured.
+
+Step 7
+Action: In Intune, open the affected device record and run a manual "Sync" action. [ELEVATED PERMISSIONS REQUIRED]
+Expected result: A fresh policy check-in is queued for the affected device.
+
+Step 8
+Action: In Intune, open the recent sign-in/profile-related policy assigned to Floor 6 and capture the current assignment state. [ELEVATED PERMISSIONS REQUIRED]
+Expected result: Current targeted scope is recorded before any containment change.
+
+Step 9
+Action: Pause or unassign the suspected sign-in/profile policy from Floor 6 device group only. [ELEVATED PERMISSIONS REQUIRED]
+Expected result: New policy application to Floor 6 is stopped for the suspected setting.
+
+Step 10
+Action: Trigger a second manual "Sync" on the same affected device in Intune. [ELEVATED PERMISSIONS REQUIRED]
+Expected result: The device requests updated effective policy state after containment.
+
+Step 11
+Action: Ask the affected user to sign in again on the same host.
+Expected result: User reaches desktop without abnormal delay.
+
+Step 12
+Action: Measure and record time from credential submit to desktop readiness.
+Expected result: A measurable post-fix login duration is captured.
+
+Step 13
+Action: Repeat sign-in test with one additional Floor 6 user on one additional host.
+Expected result: Secondary validation confirms issue is not isolated to a single user/device.
+
+Step 14
+Action: Check Intune device status for both tested hosts and confirm successful sync completion. [ELEVATED PERMISSIONS REQUIRED]
+Expected result: Both hosts show current policy check-in status after containment.
+
+Step 15
+Action: Update incident ticket with "Service Restored" and include evidence references (logs, sync times, login test times).
+Expected result: Closure evidence is auditable and complete.
+
+Step 16
+Action: Create a follow-up problem record to identify the exact misconfigured policy setting/value.
+Expected result: Root-cause deep dive is tracked separately after service restoration.
+
+3. Verification
+
+Complete all checks before closure
+- Check 1: Affected user can log in to the original affected host.
+- Check 2: Login duration is back to expected baseline for the floor (use local baseline or pre-incident baseline if available).
+- Check 3: A second user on a second Floor 6 host can log in successfully.
+- Check 4: No new repeating authentication/profile failure pattern appears in the next 30 minutes of Security and User Profile logs. [ELEVATED PERMISSIONS REQUIRED]
+- Check 5: Intune sync status for tested hosts shows successful policy refresh. [ELEVATED PERMISSIONS REQUIRED]
+
+Closure rule
+- Close as "Resolved" only after Checks 1 to 5 pass.
+
+4. Rollback (immediately actionable)
+
+Use this section if login behavior worsens after Step 9 containment.
+
+Rollback Step 1
+Action: Re-assign the paused/unassigned policy back to its exact pre-change group scope using the captured assignment state from Step 8. [ELEVATED PERMISSIONS REQUIRED]
+Expected result: Original policy targeting is restored exactly.
+
+Rollback Step 2
+Action: Trigger Intune manual "Sync" on each test host used in Steps 11 and 13. [ELEVATED PERMISSIONS REQUIRED]
+Expected result: Restored policy state is requested by test hosts.
+
+Rollback Step 3
+Action: Reboot each test host one time.
+Expected result: Hosts restart with restored policy application path.
+
+Rollback Step 4
+Action: Re-run sign-in test with the same affected user on the original host.
+Expected result: Post-rollback login behavior is confirmed and documented.
+
+Rollback Step 5
+Action: Escalate to L2 endpoint engineering with exported logs and the exact policy assignment diff.
+Expected result: Higher-tier team has complete evidence for immediate takeover.
+
+5. Notes
+
+Edge cases
+- If Security log access is denied, collect only User Profile and System logs first, then request temporary elevated support access.
+- If Intune sync does not complete within expected window, wait for portal status refresh interval and re-check before changing additional policies.
+- If only one user remains affected after service restoration, treat as user/profile-specific sub-incident, not floor-wide recurrence.
+
+Warnings
+- Do not delete user profiles during active business hours unless L2 explicitly approves and user impact is accepted.
+- Do not apply broad policy rollback outside Floor 6 scope during initial containment.
+- Do not close incident based on one successful login test alone.
+
+Related incidents
+- Copilot matter exposure concern is a separate security/access incident and must not be merged into this login runbook.
+- Desktop shortcut loss after document-management rollout is a separate endpoint configuration incident and should follow its own runbook.
